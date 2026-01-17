@@ -1,31 +1,56 @@
 import { TbWorldSearch } from "react-icons/tb";
-import { Button } from "./ui/button";
+import { Menu } from "lucide-react";
 
-function Navbar(){
-    return(
-        <header>
-        <div className="max-w-7=8xl mx-auto h-16 px-6 flex items-center justify-between border-b border-slate-200 sticky">
-        <div className="flex items-center gap-0.5">
-        <div><TbWorldSearch className="text-blue-600 text-3xl"/></div>
-        <div>
-        <h1 className="font-semibold text-blue-600 text-3xl">SearchAThon</h1> 
-        </div>   
+import { Button } from "@/components/ui/button";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+
+export default function Navbar() {
+  return (
+    <header className="w-full border-b">
+      <div className="mx-auto flex h-16 max-w-8xl items-center justify-between px-4">
+        <div className="flex items-center gap-x-0.5">
+          <TbWorldSearch className="text-blue-600 text-2xl" />
+          <h1 className="font-semibold text-blue-600 text-2xl">SearchAThon</h1>
         </div>
-        <nav className="ml-[25%]">
-         <ul className="flex justify-around text-slate-500 text-lg gap-5">
-            <li className="hover:text-slate-900 cursor-pointer transition">Home</li>
-            <li className="hover:text-slate-900 cursor-pointer transition">Explore</li>
-            <li className="hover:text-slate-900 cursor-pointer transition whitespace-nowrap">Contact Us</li>
-         </ul>
-         </nav>
-         <div id="auth" className="flex ml-[25%] justify-evenly gap-3">
-          <Button variant='outline'>Login</Button>
+        <nav className="hidden md:block">
+          <ul className="flex items-center gap-10 text-slate-600">
+            <li className="cursor-pointer hover:text-slate-900">Home</li>
+            <li className="cursor-pointer hover:text-slate-900">Explore</li>
+            <li className="cursor-pointer hover:text-slate-900 whitespace-nowrap">
+              Contact Us
+            </li>
+          </ul>
+        </nav>
+        <div className="hidden md:flex items-center gap-3">
+          <Button variant="outline">Login</Button>
           <Button>Sign Up</Button>
-         </div>
-
         </div>
-        </header>
-    )
-}
+        <div className="md:hidden">
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="outline" size="icon">
+                <Menu className="h-5 w-5" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-72">
+              <div className="mt-8 flex flex-col gap-4 p-2">
+                <button className="text-left text-lg">Home</button>
+                <button className="text-left text-lg">Explore</button>
+                <button className="text-left text-lg">Contact Us</button>
 
-export default Navbar
+                <div className="pt-4 flex flex-col gap-3">
+                  <Button variant="outline">Login</Button>
+                  <Button>Sign Up</Button>
+                </div>
+              </div>
+            </SheetContent>
+          </Sheet>
+        </div>
+      </div>
+    </header>
+  );
+}
