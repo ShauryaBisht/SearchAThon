@@ -1,6 +1,8 @@
 import './App.css'
 import Navbar from './components/Navbar'
 import {motion} from  "framer-motion"
+import Footer from './components/Footer'
+import Hero from './components/Hero'
 function App() {
   
 
@@ -12,6 +14,8 @@ function App() {
       transition={{ duration: 0.6, ease: "easeOut" }}
     >
      <Navbar />
+     <Hero />
+     <Footer />
      </motion.div>
     </>
   )
