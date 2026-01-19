@@ -9,7 +9,7 @@ import {
 
 export default function Navbar() {
   return (
-    <header className="w-full border-b sticky">
+    <header className="w-full border-b sticky top-0 z-50 bg-white/80 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-8xl items-center justify-between px-4">
         <div className="flex items-center gap-x-0.5">
           <TbWorldSearch className="text-blue-600 text-2xl" />
