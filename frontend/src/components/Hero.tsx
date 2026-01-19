@@ -49,32 +49,32 @@ function Hero(){
           </div>
        </div>
       </div>
-      <div className="text-center mt-18 ">
+      <div className="text-center mt-18 ">    
         <h1 className="font-bold text-blue-700 text-3xl">Features</h1>
-        <p className="text-slate-600 mt-3 ">Discover teams, match skills, and collaborate with the right people for your next hackathon.</p>
+        <p className="text-slate-600 mt-3 md:p-0 p-x-1.5">Discover teams, match skills, and collaborate with the right people for your next hackathon.</p>
       </div>
-      <div className="flex md:flex-row flex-col justify-center gap-x-12 mt-10">
-        <div className="md:w-[20%] md:h-[350px] p-3 flex-col gap-6 items-center justify-center rounded-2xl border border-slate-200 bg-white/70 backdrop-blur shadow-sm hover:shadow-md transition">
-         <div className="w-full   flex  justify-center">
-          <PiSlidersHorizontalBold className="text-blue-700 text-4xl md:text-7xl mt-4"/>
+      <div className="flex md:flex-row flex-col justify-center md:gap-x-12 gap-y-6 mt-10">
+        <div className="md:w-[20%] h-[200px] md:h-[350px] md:p-3 p-2 flex-col gap-6 items-center justify-center rounded-2xl border border-slate-200 bg-white/70 backdrop-blur shadow-sm hover:shadow-md transition">
+         <div className="w-full flex justify-center">
+          <PiSlidersHorizontalBold className="text-blue-700 text-5xl md:text-7xl mt-4"/>
          </div>
          <div className="text-center mt-4">
           <h1 className="text-blue-700 text-xl font-semibold">Smart Filters</h1>
           <p className="text-slate-600">Filter teams by tech stack, roles needed, and hackathon name instantly.</p>
          </div>
         </div>
-        <div className="md:w-[20%] md:h-[350px] p-3 flex-col gap-6 items-center justify-center rounded-2xl border border-slate-200 bg-white/70 backdrop-blur shadow-sm hover:shadow-md transition">
+        <div className="md:w-[20%] h-[200px] md:h-[350px] md:p-3 p-2 flex-col gap-6 items-center justify-center rounded-2xl border border-slate-200 bg-white/70 backdrop-blur shadow-sm hover:shadow-md transition">
          <div className="w-full   flex  justify-center">
-        <IoIosGitPullRequest className="text-blue-700  text-4xl md:text-7xl mt-4"/>
+        <IoIosGitPullRequest className="text-blue-700  text-5xl md:text-7xl mt-4"/>
          </div>
          <div className="text-center mt-4">
           <h1 className="text-blue-700 text-xl font-semibold">Join Request Workflow</h1>
           <p className="text-slate-600">Apply to teams with a message. Leaders can accept or reject requests.</p>
          </div>
         </div>
-        <div className="md:w-[20%] md:h-[350px] p-3 flex-col  items-center justify-center rounded-2xl border border-slate-200 bg-white/70 backdrop-blur shadow-sm hover:shadow-md transition">
+        <div className="md:w-[20%] md:h-[350px] h-[200px] md:p-3 p-2 flex-col  items-center justify-center rounded-2xl border border-slate-200 bg-white/70 backdrop-blur shadow-sm hover:shadow-md transition">
          <div className="w-full flex justify-center">
-          <LuLayoutDashboard className="text-blue-700 text-4xl md:text-7xl mt-4"/>
+          <LuLayoutDashboard className="text-blue-700 text-5xl md:text-7xl mt-4"/>
          </div>
          <div className="text-center mt-4">
           <h1 className="text-blue-700 text-xl font-semibold">Team Dashboard</h1>
