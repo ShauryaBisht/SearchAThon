@@ -2,6 +2,7 @@ import { TbWorldSearch } from "react-icons/tb";
 import { Menu } from "lucide-react";
 import { ModeToggle } from "./Modetoggle";
 import { Button } from "@/components/ui/button";
+import { Link,NavLink } from "react-router-dom";
 import {
   Sheet,
   SheetContent,
@@ -18,17 +19,15 @@ export default function Navbar() {
         </div>
         <nav className="hidden md:block">
           <ul className="flex items-center gap-10 text-slate-600">
-            <a href="/"><li className="text-slate-700 dark:text-slate-300 hover:text-blue-500 dark:hover:text-blue-400 transition-colors">Home</li></a>
-            <li className="text-slate-700 dark:text-slate-300 hover:text-blue-500 dark:hover:text-blue-400 transition-colors">Explore</li>
-            <li className="text-slate-700 dark:text-slate-300 hover:text-blue-500 dark:hover:text-blue-400 transition-colors whitespace-nowrap">
-              Contact Us
-            </li>
+            <NavLink to='/' className={({ isActive }) =>`transition-colors ${isActive? "text-blue-600 dark:text-blue-400 font-semibold": "text-slate-700 dark:text-slate-300 hover:text-blue-500 dark:hover:text-blue-400"}`}>Home</NavLink>
+            <NavLink to='/explore'  className={({ isActive }) =>`transition-colors ${isActive? "text-blue-600 dark:text-blue-400 font-semibold": "text-slate-700 dark:text-slate-300 hover:text-blue-500 dark:hover:text-blue-400"}`}>Explore</NavLink>
+            <NavLink to='/contact-us' className={({ isActive }) =>`transition-colors ${isActive? "text-blue-600 dark:text-blue-400 font-semibold": "text-slate-700 dark:text-slate-300 hover:text-blue-500 dark:hover:text-blue-400"}`}>Contact Us</NavLink>
             <li><ModeToggle /></li>
           </ul>
         </nav>
         <div className="hidden md:flex items-center gap-3">
-          <a href="/login"><Button variant="outline">Login</Button></a>
-          <Button>Sign Up</Button>
+          <NavLink to="/login"><Button variant="outline">Login</Button></NavLink>
+          <NavLink to='/signup'><Button>Sign Up</Button></NavLink>
         </div>
         <div className="md:hidden">
           <Sheet>
@@ -38,15 +37,17 @@ export default function Navbar() {
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="w-72">
+              <div className="flex justify-center mt-3">
+                <ModeToggle />
+                </div>
               <div className="mt-8 flex flex-col gap-4 p-2">
-                <button className="text-left text-lg">Home</button>
-                <button className="text-left text-lg">Explore</button>
-                <button className="text-left text-lg">Contact Us</button>
-
+                <NavLink to='/'><button className="text-left text-lg">Home</button></NavLink>
+                <NavLink to='/explore'><button className="text-left text-lg">Explore</button></NavLink>
+                <NavLink to='/contact-us'><button className="text-left text-lg">Contact Us</button></NavLink>
+                <button className="text-left text-lg"></button>
                 <div className="pt-4 flex flex-col gap-3">
-                   
-                  <Button>Login</Button>
-                  <Button>Sign Up</Button>
+                  <NavLink to='/login'><Button>Login</Button></NavLink>
+                  <NavLink to='/signup'><Button>Sign Up</Button></NavLink>
                 </div>
               </div>
             </SheetContent>

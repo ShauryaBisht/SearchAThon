@@ -5,7 +5,7 @@ import Footer from './components/Footer'
 import Hero from './components/Hero'
 import Login from './components/Login'
 import {Routes,Route} from 'react-router-dom'
-
+import Signup from './components/SignUp'
 function App() {
   
 
@@ -20,6 +20,7 @@ function App() {
      <Routes>
      <Route path='/' element={<Hero />} />
      <Route path='/login' element={<Login />} />
+     <Route path='/signup' element={<Signup />} />
      </Routes>
      <Footer />
      </motion.div>

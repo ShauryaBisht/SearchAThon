@@ -4,6 +4,7 @@ import { FaSearch } from "react-icons/fa";
 import { FaUsers } from "react-icons/fa";
 import { PiSlidersHorizontalBold } from "react-icons/pi";
 import { IoIosGitPullRequest } from "react-icons/io";
+import { NavLink } from "react-router-dom";
 import { LuLayoutDashboard } from "react-icons/lu";
 function Hero(){
     return(
@@ -17,7 +18,7 @@ function Hero(){
           <p className="text-slate-600 md:text-lg dark:text-slate-300">SearchAThon helps participants find teammates, match skills, and form strong hackathon teams quickly and easily.</p>
         </div>
         <div>
-           <Button className="bg-blue-600 px-6 py-3 rounded-xl hover:bg-blue-700 transition">Create an Account</Button>
+          <NavLink to='/signup'><Button className="bg-blue-600 px-6 py-3 rounded-xl hover:bg-blue-700 transition">Create an Account</Button></NavLink> 
         </div>
       </div>
       <div className="flex justify-evenly md:mt-18 mt-10 flex-col md:flex-row gap-4">
@@ -86,7 +87,7 @@ function Hero(){
       <div className="w-24 h-[2px] bg-slate-200 rounded-full"></div>
       </div>
       <div className="flex justify-center mt-10">
-      <Button className="bg-blue-600 px-8 py-3 text-lg rounded-xl hover:bg-blue-700 transition">Get Started</Button>
+      <NavLink to='/signup'><Button className="bg-blue-600 px-8 py-3 text-lg rounded-xl hover:bg-blue-700 transition">Get Started</Button></NavLink>
       </div>
      </div>
       </main>
