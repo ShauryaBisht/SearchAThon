@@ -1,6 +1,4 @@
-import { GalleryVerticalEnd } from "lucide-react"
 import { TbWorldSearch } from "react-icons/tb";
-
 import { LoginForm } from "@/components/login-form"
 
 export default function Login() {

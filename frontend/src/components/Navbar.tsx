@@ -1,5 +1,6 @@
 import { TbWorldSearch } from "react-icons/tb";
 import { Menu } from "lucide-react";
+import { ModeToggle } from "./Modetoggle";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -9,7 +10,7 @@ import {
 
 export default function Navbar() {
   return (
-    <header className="w-full border-b sticky top-0 z-50 bg-white/80 backdrop-blur">
+    <header className="w-full border-b sticky top-0 z-50 dark:bg-slate-950/80 backdrop-blur  border-slate-800">
       <div className="mx-auto flex h-16 max-w-8xl items-center justify-between px-4">
         <div className="flex items-center gap-x-0.5">
           <TbWorldSearch className="text-blue-600 text-2xl" />
@@ -17,11 +18,12 @@ export default function Navbar() {
         </div>
         <nav className="hidden md:block">
           <ul className="flex items-center gap-10 text-slate-600">
-            <a href="/"><li className="cursor-pointer hover:text-slate-900">Home</li></a>
-            <li className="cursor-pointer hover:text-slate-900">Explore</li>
-            <li className="cursor-pointer hover:text-slate-900 whitespace-nowrap">
+            <a href="/"><li className="text-slate-700 dark:text-slate-300 hover:text-blue-500 dark:hover:text-blue-400 transition-colors">Home</li></a>
+            <li className="text-slate-700 dark:text-slate-300 hover:text-blue-500 dark:hover:text-blue-400 transition-colors">Explore</li>
+            <li className="text-slate-700 dark:text-slate-300 hover:text-blue-500 dark:hover:text-blue-400 transition-colors whitespace-nowrap">
               Contact Us
             </li>
+            <li><ModeToggle /></li>
           </ul>
         </nav>
         <div className="hidden md:flex items-center gap-3">
@@ -42,7 +44,8 @@ export default function Navbar() {
                 <button className="text-left text-lg">Contact Us</button>
 
                 <div className="pt-4 flex flex-col gap-3">
-                  <Button variant="outline">Login</Button>
+                   
+                  <Button>Login</Button>
                   <Button>Sign Up</Button>
                 </div>
               </div>
