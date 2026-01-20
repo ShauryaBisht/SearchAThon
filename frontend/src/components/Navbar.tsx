@@ -17,7 +17,7 @@ export default function Navbar() {
         </div>
         <nav className="hidden md:block">
           <ul className="flex items-center gap-10 text-slate-600">
-            <li className="cursor-pointer hover:text-slate-900">Home</li>
+            <a href="/"><li className="cursor-pointer hover:text-slate-900">Home</li></a>
             <li className="cursor-pointer hover:text-slate-900">Explore</li>
             <li className="cursor-pointer hover:text-slate-900 whitespace-nowrap">
               Contact Us
@@ -25,7 +25,7 @@ export default function Navbar() {
           </ul>
         </nav>
         <div className="hidden md:flex items-center gap-3">
-          <Button variant="outline">Login</Button>
+          <a href="/login"><Button variant="outline">Login</Button></a>
           <Button>Sign Up</Button>
         </div>
         <div className="md:hidden">

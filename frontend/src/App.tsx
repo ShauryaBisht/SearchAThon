@@ -3,6 +3,8 @@ import Navbar from './components/Navbar'
 import {motion} from  "framer-motion"
 import Footer from './components/Footer'
 import Hero from './components/Hero'
+import Login from './components/Login'
+import {Routes,Route} from 'react-router-dom'
 function App() {
   
 
@@ -14,7 +16,10 @@ function App() {
       transition={{ duration: 0.6, ease: "easeOut" }}
     >
      <Navbar />
-     <Hero />
+     <Routes>
+     <Route path='/' element={<Hero />} />
+     <Route path='/login' element={<Login />} />
+     </Routes>
      <Footer />
      </motion.div>
     </>
