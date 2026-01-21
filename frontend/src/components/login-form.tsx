@@ -1,3 +1,4 @@
+
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Link } from "react-router-dom"
@@ -16,11 +17,33 @@ import {
   FieldSeparator,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { useForm } from "react-hook-form"
+
+type LoginFormData = {
+  email: string
+  password: string
+}
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+const {
+    register,
+    handleSubmit,reset,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginFormData>({
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+})
+
+ const onSubmit = async (data: LoginFormData) => {
+    await new Promise((resolve)=>setTimeout(resolve,2000));
+    console.log("Login Data:", data)
+    reset();
+  }
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -31,7 +54,7 @@ export function LoginForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <FieldGroup>
               <Field>
                 <Button variant="outline" type="button">
@@ -62,8 +85,19 @@ export function LoginForm({
                   id="email"
                   type="email"
                   placeholder="m@example.com"
-                  required
+                   {...register("email", {
+                    required: "Email is required",
+                    pattern: {
+                      value: /^\S+@\S+\.\S+$/,
+                      message: "Enter a valid email",
+                    },
+                  })}
                 />
+                 {errors?.email?.message && (
+                  <p className="text-sm text-red-500 mt-1">
+                    {errors.email.message}
+                  </p>
+                )}
               </Field>
               <Field>
                 <div className="flex items-center">
@@ -75,10 +109,24 @@ export function LoginForm({
                     Forgot your password?
                   </a>
                 </div>
-                <Input id="password" type="password" required />
+                <Input id="password" type="password" 
+                {...register("password", {
+                    required: "Password is required",
+                    minLength: {
+                      value: 6,
+                      message: "Password must be at least 6 characters",
+                    },
+                  })}/>
+                  {errors.password && (
+                  <p className="text-sm text-red-500 mt-1">
+                    {errors.password.message}
+                  </p>
+                    )}
               </Field>
               <Field>
-                <Button type="submit">Login</Button>
+                <Button type="submit" disabled={isSubmitting} className="w-full">
+                  {isSubmitting ? "Logging in..." : "Login"}
+                </Button>
                 <div className="flex justify-center">
                <Button asChild type="button" className="w-full">
                   <Link to="/">Continue as Guest</Link>

@@ -2,7 +2,7 @@ import { TbWorldSearch } from "react-icons/tb";
 import { Menu } from "lucide-react";
 import { ModeToggle } from "./Modetoggle";
 import { Button } from "@/components/ui/button";
-import { Link,NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import {
   Sheet,
   SheetContent,
