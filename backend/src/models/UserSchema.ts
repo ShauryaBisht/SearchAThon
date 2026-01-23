@@ -1,4 +1,4 @@
-import mongoose, { model,Document } from "mongoose";
+import mongoose, { Document,Model,Schema } from "mongoose";
 import bcrypt from 'bcryptjs'
 import  jwt from 'jsonwebtoken'
 export interface IUser{
@@ -12,8 +12,9 @@ export interface IUserMethods {
   generateAccessToken(): string;
   generateRefreshToken(): string;
 }
-export type UserDocument = IUser & Document & IUserMethods;
-const userSchema=new mongoose.Schema<UserDocument>({
+type UserModel = Model<IUser, {}, IUserMethods>;
+
+const userSchema=new Schema<IUser, UserModel, IUserMethods>({
     fullName:{
         type:String,
         required:true
@@ -41,11 +42,11 @@ userSchema.methods.isPasswordCorrect=async function(password:string){
    return await bcrypt.compare(password,this.password)
 }
 
-userSchema.methods.generateAccessToken = async function() {
+userSchema.methods.generateAccessToken =  function() {
 
   return jwt.sign(
     {
-      userId: this._id,
+      userId: this._id.toString(),
       email: this.email,
       fullName: this.fullName,
     },
@@ -54,7 +55,7 @@ userSchema.methods.generateAccessToken = async function() {
   );
 };
 
-userSchema.methods.generateRefreshToken = async function (){
+userSchema.methods.generateRefreshToken =  function (){
  
 
   return jwt.sign(
@@ -64,8 +65,5 @@ userSchema.methods.generateRefreshToken = async function (){
   );
 };
 
+export const User = mongoose.model<IUser, UserModel>("User", userSchema);
 
-
-
-
-export const User=model<UserDocument>("User",userSchema)

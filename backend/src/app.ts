@@ -23,7 +23,7 @@ app.use(
 
 app.use("/api", authRouter);
 
-const PORT = Number(process.env.PORT) || 8000;
+const PORT = Number(process.env.PORT) ;
 
 connectDB()
   .then(() => {
