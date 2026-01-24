@@ -4,8 +4,10 @@ import './index.css'
 import App from './App.tsx'
 import { BrowserRouter } from 'react-router-dom'
 import { ThemeProvider } from './components/ThemeProvider.tsx'
+import { UserProvider } from './components/UserContext.tsx'
 
 createRoot(document.getElementById('root')!).render(
+  <UserProvider>
    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
   <BrowserRouter>
   <StrictMode>
@@ -13,4 +15,5 @@ createRoot(document.getElementById('root')!).render(
   </StrictMode>
   </BrowserRouter>
   </ThemeProvider>
+  </UserProvider>
 )

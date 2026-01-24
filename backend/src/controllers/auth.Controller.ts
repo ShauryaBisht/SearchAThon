@@ -115,4 +115,11 @@ const refreshAccessToken = asyncHandler(async (req:Request, res:Response) => {
     );
 });
 
-export {signinUser,loginUser}
+const getMe=asyncHandler(async(req:Request,res:Response)=>{
+    const user=req.user
+    res.status(200).json(new ApiResponse(200,user,"User found successfully"))
+})
+
+
+
+export {signinUser,loginUser,getMe}
