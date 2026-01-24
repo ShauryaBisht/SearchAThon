@@ -18,11 +18,12 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { useForm } from "react-hook-form"
-
+import { login } from "@/services/authServices"
 type LoginFormData = {
   email: string
   password: string
 }
+
 
 export function LoginForm({
   className,
@@ -40,9 +41,13 @@ const {
 })
 
  const onSubmit = async (data: LoginFormData) => {
-    await new Promise((resolve)=>setTimeout(resolve,2000));
-    console.log("Login Data:", data)
-    reset();
+    try {
+      const response=await login(data);
+      console.log(`Login Successful`,response)
+        reset();
+    } catch (error) {
+      console.log("Login unsuccessful",error);
+    }
   }
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>

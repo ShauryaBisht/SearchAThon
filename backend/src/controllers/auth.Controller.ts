@@ -25,10 +25,13 @@ const generateAccessAndRefreshTokens=async(userId:any)=>{
 }
 
 const signinUser=asyncHandler(async(req:Request,res:Response)=>{
-    const {fullName,email,password} =req.body
-    if(!fullName||!email||!password){
+    const {fullName,email,password,confirmPassword} =req.body
+    if(!fullName||!email||!password||!confirmPassword){
         throw new ApiError(400,"All fields are required")
     }
+    
+    if(password!=confirmPassword)
+         throw new ApiError(400,"The password does not match")
      const existingUser = await User.findOne({ email });
               if (existingUser) {
                  throw new ApiError(409,"User already exists");
@@ -41,13 +44,11 @@ const signinUser=asyncHandler(async(req:Request,res:Response)=>{
 
 })
 const loginUser=asyncHandler(async(req:Request,res:Response)=>{
-    const {email,password,confirmPassword}=req.body
+    const {email,password}=req.body
 
-    if(!email || !password || !confirmPassword)
+    if(!email || !password)
          throw new ApiError(400,"All fields is required")
 
-    if(password!=confirmPassword)
-         throw new ApiError(400,"The password does not match")
     const user=await User.findOne({email:email})
     if(!user)
          throw new ApiError(404,"User not Found")

@@ -15,12 +15,14 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import {useForm} from 'react-hook-form'
+import { redirect } from "react-router-dom"
+import { signup } from "@/services/authServices"
 
 type SigninFormData={
-  fullname:string,
+  fullName:string,
   email:string,
   password:string,
-  confirmpassword:string
+  confirmPassword:string
 }
 export function SignupForm({
   className,
@@ -40,9 +42,14 @@ export function SignupForm({
   })
   const password = watch("password");
   const onSubmit=async(data:SigninFormData)=>{
-      await new Promise((resolve)=>setTimeout(resolve,2000))
-      console.log("Data is",data)
-      reset()
+       try{
+        const res=await signup(data)
+        console.log("SignUp Success:",res);
+        redirect('/login')
+        reset()
+       }catch(err){
+         console.log("SignUp failed",err);
+       }
   }
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -58,14 +65,14 @@ export function SignupForm({
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="name">Full Name</FieldLabel>
-                <Input id="name" type="text" placeholder="John Doe"  {...register("fullname",{
+                <Input id="name" type="text" placeholder="John Doe"  {...register("fullName",{
                     required:"Full Name is required",
                     pattern: /^[A-Za-z]+$/i ,
                     maxLength:{value:99,message:"Full name Should be less than 99 letters"}
                   })}/>
-                   {errors.fullname?.message && (
+                   {errors.fullName?.message && (
                   <p className="text-sm text-red-500 mt-1">
-                    {errors.fullname.message}
+                    {errors.fullName.message}
                   </p>
                 )}
               </Field>
@@ -110,14 +117,14 @@ export function SignupForm({
                     <FieldLabel htmlFor="confirm-password">
                       Confirm Password
                     </FieldLabel>
-                    <Input id="confirm-password" type="password"  {...register("confirmpassword", {
+                    <Input id="confirm-password" type="password"  {...register("confirmPassword", {
                  required: "Confirm password is required",
               validate: (value) =>
                       value === password || "Passwords do not match",
                    })}
                   />
-                     {errors.confirmpassword?.message && (
-                     <p className="text-sm text-red-500">{errors.confirmpassword.message}</p>
+                     {errors.confirmPassword?.message && (
+                     <p className="text-sm text-red-500">{errors.confirmPassword.message}</p>
                     )}
                   </Field>
                 </Field>
