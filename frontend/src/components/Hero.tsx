@@ -23,7 +23,7 @@ function Hero(){
           <p className="text-slate-600 md:text-lg dark:text-slate-300">SearchAThon helps participants find teammates, match skills, and form strong hackathon teams quickly and easily.</p>
         </div>
         <div>
-          <NavLink to='/signup'><Button className="bg-blue-600 px-6 py-3 rounded-xl hover:bg-blue-700 transition">{user?"Explore Teams":"Create an Account"}</Button></NavLink> 
+          <NavLink to={user?"/explore":"/signup"}><Button className="bg-blue-600 px-6 py-3 rounded-xl hover:bg-blue-700 transition">{user?"Explore Teams":"Create an Account"}</Button></NavLink> 
         </div>
       </div>
       <div className="flex justify-evenly md:mt-18 mt-10 flex-col md:flex-row gap-4">
@@ -70,7 +70,7 @@ function Hero(){
          </div>
         </div>
         <div className="md:w-[20%] h-[200px] md:h-[350px] md:p-3 p-2 flex-col gap-6  dark:bg-slate-900/40 dark:border-slate-700/60 hover:-translate-y-1 transition-all duration-200items-center justify-center rounded-2xl border border-slate-200 bg-white/70 backdrop-blur shadow-sm hover:shadow-md">
-         <div className="w-full   flex  justify-center">
+         <div className="w-full flex justify-center">
         <IoIosGitPullRequest className="text-blue-700  text-5xl md:text-7xl mt-4 dark:text-blue-400"/>
          </div>
          <div className="text-center mt-4">

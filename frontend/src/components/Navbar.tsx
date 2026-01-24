@@ -2,7 +2,9 @@ import { TbWorldSearch } from "react-icons/tb";
 import { Menu } from "lucide-react";
 import { ModeToggle } from "./Modetoggle";
 import { Button } from "@/components/ui/button";
-import { NavLink } from "react-router-dom";
+import { NavLink,useNavigate } from "react-router-dom";
+import { useAuth } from "./UserContext";
+import { logOut } from "@/services/authServices";
 import {
   Sheet,
   SheetContent,
@@ -10,6 +12,18 @@ import {
 } from "@/components/ui/sheet";
 
 export default function Navbar() {
+  const navigate=useNavigate()
+  const {user,setUser}=useAuth();
+  const handleLogout=async()=>{
+     try{
+      await logOut();
+      setUser(null);
+      navigate('/login');
+     }
+     catch(err){
+      console.log(err);
+     }
+  }
   return (
     <header className="w-full border-b sticky top-0 z-50 dark:bg-slate-950/80 backdrop-blur  border-slate-800">
       <div className="mx-auto flex h-16 max-w-8xl items-center justify-between px-4">
@@ -26,8 +40,9 @@ export default function Navbar() {
           </ul>
         </nav>
         <div className="hidden md:flex items-center gap-3">
-          <NavLink to="/login"><Button variant="outline">Login</Button></NavLink>
-          <NavLink to='/signup'><Button>Sign Up</Button></NavLink>
+          <NavLink to="/login"><Button variant="outline" className={user?"hidden" : ""}>Login</Button></NavLink>
+          <NavLink to='/signup'><Button className={user?"hidden" : ""}>Sign Up</Button></NavLink>
+           <Button onClick={handleLogout} variant="destructive"className={!user?"hidden" : ""}>LogOut</Button>
         </div>
         <div className="md:hidden">
           <Sheet>
@@ -46,8 +61,9 @@ export default function Navbar() {
                 <NavLink to='/contact-us'><button className="text-left text-lg">Contact Us</button></NavLink>
                 <button className="text-left text-lg"></button>
                 <div className="pt-4 flex flex-col gap-3">
-                  <NavLink to='/login'><Button>Login</Button></NavLink>
-                  <NavLink to='/signup'><Button>Sign Up</Button></NavLink>
+                  <NavLink to='/login'><Button className={user?"hidden" : ""}>Login</Button></NavLink>
+                  <NavLink to='/signup'><Button className={user?"hidden" : ""}>Sign Up</Button></NavLink>
+                  <Button variant='destructive' className={!user?"hidden":""}>Logout</Button>
                 </div>
               </div>
             </SheetContent>

@@ -6,7 +6,7 @@ import {Request,Response} from 'express'
 import jwt, { JwtPayload } from 'jsonwebtoken'
 
 interface DecodedToken extends JwtPayload {
-    _id: string;
+    userId: string;
     email: string;
 }
 
@@ -63,7 +63,8 @@ const loginUser=asyncHandler(async(req:Request,res:Response)=>{
 
     const options={
                httpOnly:true,
-               secure:false
+               secure:false,
+               sameSite: "lax" as const
            }
            return res.status(200).cookie("accessToken",accessToken,options).cookie("refreshToken",refreshToken,options)
            .json(
@@ -88,7 +89,7 @@ const refreshAccessToken = asyncHandler(async (req:Request, res:Response) => {
   } catch (err) {
     throw new ApiError(401, "Invalid or expired refresh token");
   }
-  const user = await User.findById(decodedToken._id);
+  const user = await User.findById(decodedToken.userId);
   if (!user) {
     throw new ApiError(401, "Invalid refresh token");
   }
@@ -101,7 +102,8 @@ const refreshAccessToken = asyncHandler(async (req:Request, res:Response) => {
     await generateAccessAndRefreshTokens(user._id);
   const options = {
     httpOnly: true,
-    secure: false
+    secure: false,
+    sameSite: "lax" as const
   };
   return res
     .status(200)
@@ -121,6 +123,23 @@ const getMe=asyncHandler(async(req:Request,res:Response)=>{
     res.status(200).json(new ApiResponse(200,user,"User found successfully"))
 })
 
+const logOut=asyncHandler(async(req:Request,res:Response)=>{
+   await  User.findByIdAndUpdate(req.user._id,
+          {
+              $set:{refreshToken:undefined}
+          },
+          {
+              new:true
+          }
+        )
+        const options={
+          httpOnly:true,
+          secure:false
+      }
+      return res.status(200).clearCookie("accessToken",options)
+      .clearCookie("refreshToken",options)
+      .json(new ApiResponse(200,{},"User logged out"))
+  })
 
 
-export {signinUser,loginUser,getMe}
+export {signinUser,loginUser,getMe,logOut}

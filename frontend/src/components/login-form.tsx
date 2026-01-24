@@ -19,6 +19,8 @@ import {
 import { Input } from "@/components/ui/input"
 import { useForm } from "react-hook-form"
 import { login } from "@/services/authServices"
+import { useAuth } from "./UserContext"
+import { useNavigate } from "react-router-dom"
 type LoginFormData = {
   email: string
   password: string
@@ -39,12 +41,15 @@ const {
       password: "",
     },
 })
-
+const {setUser}=useAuth()
+ const navigate=useNavigate()
  const onSubmit = async (data: LoginFormData) => {
     try {
       const response=await login(data);
       console.log(`Login Successful`,response)
+      setUser(response.data.user)
         reset();
+        navigate('/')
     } catch (error) {
       console.log("Login unsuccessful",error);
     }

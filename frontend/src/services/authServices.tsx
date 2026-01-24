@@ -22,3 +22,8 @@ export const signup=async(data:SignUpData)=>{
     const response=await axios.post(`${API_URL}/signup`,data,{withCredentials:true})
     return response.data
 }
+
+export const logOut=async()=>{
+  const response=await axios.post(`${API_URL}/logout`,{},{withCredentials:true} )
+  return response.data;
+}

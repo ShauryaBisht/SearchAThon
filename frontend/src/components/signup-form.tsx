@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import {useForm} from 'react-hook-form'
-import { redirect } from "react-router-dom"
+import { useNavigate} from "react-router-dom"
 import { signup } from "@/services/authServices"
 
 type SigninFormData={
@@ -28,6 +28,8 @@ export function SignupForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+
+ const navigate=useNavigate()
 
   const {
       register,
@@ -45,7 +47,7 @@ export function SignupForm({
        try{
         const res=await signup(data)
         console.log("SignUp Success:",res);
-        redirect('/login')
+        navigate('/login')
         reset()
        }catch(err){
          console.log("SignUp failed",err);

@@ -6,8 +6,12 @@ import Hero from './components/Hero'
 import Login from './components/Login'
 import {Routes,Route} from 'react-router-dom'
 import Signup from './components/SignUp'
+import ProtectedRoute from './components/ProtectedRoute'
+import { useAuth } from './components/UserContext'
 function App() {
-  
+  const { loading } = useAuth();
+
+  if (loading) return <div>Loading...</div>;
 
   return (
     <>
@@ -21,6 +25,11 @@ function App() {
      <Route path='/' element={<Hero />} />
      <Route path='/login' element={<Login />} />
      <Route path='/signup' element={<Signup />} />
+
+    <ProtectedRoute>
+      <Route path='/' element></Route>
+    </ProtectedRoute>
+
      </Routes>
      <Footer />
      </motion.div>

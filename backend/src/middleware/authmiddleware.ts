@@ -5,7 +5,7 @@ import { NextFunction, Request,Response } from "express";
 import { JwtPayload } from "jsonwebtoken";
 
 interface DecodedToken extends JwtPayload {
-    userid: string;
+    userId: string;
     email: string;
 }
 
@@ -26,7 +26,7 @@ export const verifyJWT = async (req:Request, res:Response, next:NextFunction) =>
       token,
       process.env.ACCESS_TOKEN_SECRET as string
     )as DecodedToken
-    const user = await User.findById(decoded.userid).select("-password");
+    const user = await User.findById(decoded.userId).select("-password");
     if (!user) {
   throw new ApiError(401, "User not found");
 }
@@ -35,7 +35,8 @@ export const verifyJWT = async (req:Request, res:Response, next:NextFunction) =>
     console.log("Cookies:", req.cookies);
 
     next();
-  } catch (error) {
+  } catch (error:any) {
+    console.log("Error",error.message)
     throw new ApiError(401, "Invalid Access Token");
   }
 };

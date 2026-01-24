@@ -22,9 +22,12 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         withCredentials: true,
       })
       setUser(res.data.user)
-    } catch {
-      setUser(null)
-    } finally {
+    } catch (err: any) {
+  if (err.response?.status !== 401) {
+    console.error(err);
+  }
+  setUser(null);
+ } finally {
       setLoading(false)
     }
   };
