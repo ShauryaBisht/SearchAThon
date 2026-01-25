@@ -120,6 +120,7 @@ const refreshAccessToken = asyncHandler(async (req:Request, res:Response) => {
 
 const getMe=asyncHandler(async(req:Request,res:Response)=>{
     const user=req.user
+    console.log("User found in request:", req.user);
     res.status(200).json(new ApiResponse(200,user,"User found successfully"))
 })
 

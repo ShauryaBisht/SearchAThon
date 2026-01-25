@@ -47,7 +47,7 @@ const {setUser}=useAuth()
     try {
       const response=await login(data);
       console.log(`Login Successful`,response)
-      setUser(response.data.user)
+      setUser(response.data.data)
         reset();
         navigate('/')
     } catch (error) {

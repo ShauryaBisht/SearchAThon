@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { NavLink,useNavigate } from "react-router-dom";
 import { useAuth } from "./UserContext";
 import { logOut } from "@/services/authServices";
+import { FaRegUserCircle } from "react-icons/fa";
 import {
   Sheet,
   SheetContent,
@@ -43,6 +44,8 @@ export default function Navbar() {
           <NavLink to="/login"><Button variant="outline" className={user?"hidden" : ""}>Login</Button></NavLink>
           <NavLink to='/signup'><Button className={user?"hidden" : ""}>Sign Up</Button></NavLink>
            <Button onClick={handleLogout} variant="destructive"className={!user?"hidden" : ""}>LogOut</Button>
+           <NavLink to={user?`/profile/${user._id}`:"#"}> <FaRegUserCircle className={!user?"hidden" : " text-3xl text-blue-400"} /></NavLink>
+           
         </div>
         <div className="md:hidden">
           <Sheet>
