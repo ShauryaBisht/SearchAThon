@@ -50,6 +50,15 @@ const {setUser}=useAuth()
       setUser(response.data.data)
         reset();
         navigate('/')
+        const userData = response.data?.user || response.user || response.data?.data?.user;
+
+    if (userData) {
+      setUser(userData);
+      reset();
+      navigate('/');
+    } else {
+      console.error("Could not find user in response. Look at the log above.");
+    }
     } catch (error) {
       console.log("Login unsuccessful",error);
     }
