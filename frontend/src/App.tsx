@@ -28,7 +28,7 @@ function App() {
      <Route path='/signup' element={<Signup />} />
 
    
-      <Route path={'/profile/${user._id}'} element={ <ProtectedRoute><Profile /></ProtectedRoute>}></Route>
+      <Route path="/profile/:id" element={ <ProtectedRoute><Profile /></ProtectedRoute>}></Route>
     
 
      </Routes>

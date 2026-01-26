@@ -64,9 +64,9 @@ export default function Navbar() {
                 <NavLink to='/contact-us'><button className="text-left text-lg">Contact Us</button></NavLink>
                 <button className="text-left text-lg"></button>
                 <div className="pt-4 flex flex-col gap-3">
-                  <NavLink to='/login'><Button className={user?"hidden" : ""}>Login</Button></NavLink>
-                  <NavLink to='/signup'><Button className={user?"hidden" : ""}>Sign Up</Button></NavLink>
-                  <Button variant='destructive' className={!user?"hidden":""}>Logout</Button>
+                  <NavLink to='/login'><Button className={user?"hidden" : "w-full"}>Login</Button></NavLink>
+                  <NavLink to='/signup'><Button className={user?"hidden" : "w-full"}>Sign Up</Button></NavLink>
+                  <Button variant='destructive' className={!user?"hidden":"w-full"}>Logout</Button>
                 </div>
               </div>
             </SheetContent>
