@@ -23,7 +23,18 @@ export default function ProfileForm({ defaultValues }: Props) {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<ProfileFormValues>({
-    defaultValues: defaultValues || {},
+    defaultValues: {
+    bio: "",
+    role: "",
+    experienceLevel: "",
+    preferredRole: "",
+    location: "",
+    skills: "",
+    github: "",
+    linkedin: "",
+    twitter: "",
+    ...defaultValues,
+  },
   })
 
   const onSubmit: SubmitHandler<ProfileFormValues> = (data) => {

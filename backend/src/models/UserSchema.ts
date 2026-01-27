@@ -5,7 +5,16 @@ export interface IUser{
     fullName:string,
     email:string,
     password:string,
-    refreshToken?:string
+    refreshToken?:string,
+    role:string,
+    experienceLevel:string,
+    preferredRole:string,
+    location:string,
+    bio:string,
+    skills:string[],
+    github:string,
+    linkedin:string,
+    twitter:string
 }
 export interface IUserMethods {
   isPasswordCorrect(password: string): Promise<boolean>;
@@ -30,7 +39,45 @@ const userSchema=new Schema<IUser, UserModel, IUserMethods>({
     },
     refreshToken: {
             type: String
-        }
+    },
+   role: {
+    type: String,
+  },
+
+  experienceLevel: {
+    type: String,
+    enum: ["Beginner", "Intermediate", "Advanced"],
+  },
+  preferredRole: {
+    type: String,
+  },
+
+  location: {
+    type: String,
+  },
+
+  bio: {
+    type: String,
+    maxlength: 300,
+  },
+
+  skills: [
+    {
+      type: String,
+    },
+  ],
+
+  github: {
+    type: String,
+  },
+
+  linkedin: {
+    type: String,
+  },
+
+  twitter: {
+    type: String,
+  },
 },{timestamps:true})
 
 userSchema.pre("save",async function(){
