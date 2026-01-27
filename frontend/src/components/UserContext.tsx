@@ -5,7 +5,15 @@ import axios from "axios"
 type User = {
   _id:string,
   fullName:string,
-  email:string
+  email:string,
+  bio: string
+  role: string
+  experienceLevel: "Beginner" | "Intermediate" | "Advanced" | ""
+  preferredRole: string
+  location: string
+  skills: string[]
+  github: string
+  linkedin: string
 }|null;
 
 type AuthContextType = {

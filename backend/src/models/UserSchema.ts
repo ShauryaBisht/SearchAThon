@@ -14,7 +14,6 @@ export interface IUser{
     skills:string[],
     github:string,
     linkedin:string,
-    twitter:string
 }
 export interface IUserMethods {
   isPasswordCorrect(password: string): Promise<boolean>;
@@ -72,10 +71,6 @@ const userSchema=new Schema<IUser, UserModel, IUserMethods>({
   },
 
   linkedin: {
-    type: String,
-  },
-
-  twitter: {
     type: String,
   },
 },{timestamps:true})

@@ -1,5 +1,7 @@
+import axios from "axios"
 import { useForm } from "react-hook-form"
 import type { SubmitHandler } from "react-hook-form"
+import { useNavigate } from "react-router-dom"
 
 type ProfileFormValues = {
   bio: string
@@ -32,20 +34,25 @@ export default function ProfileForm({ defaultValues }: Props) {
     skills: "",
     github: "",
     linkedin: "",
-    twitter: "",
     ...defaultValues,
   },
   })
-
-  const onSubmit: SubmitHandler<ProfileFormValues> = (data) => {
+  const navigate=useNavigate()
+  const onSubmit: SubmitHandler<ProfileFormValues> = async(data) => {
     const formattedData = {
       ...data,
       skills: data.skills
         ? data.skills.split(",").map((skill) => skill.trim())
         : [],
     }
+    try {
+      const response=await axios.put("http://localhost:8000/api/profile/edit",formattedData,{withCredentials:true})
+      console.log("Profile updated:", response.data);
+      navigate('/profile')
+    } catch (error) {
+      console.log("Error on editing profile",error)
+    }
 
-    console.log("Profile Update:", formattedData)
    
   }
 
@@ -157,18 +164,6 @@ export default function ProfileForm({ defaultValues }: Props) {
             />
           }
           error={errors.linkedin?.message}
-        />
-
-        <InputField
-          label="Twitter / X"
-          input={
-            <input
-              {...register("twitter", { pattern: { value: /^https?:\/\//, message: "Enter valid URL" } })}
-              placeholder="https://x.com/..."
-              className="input"
-            />
-          }
-          error={errors.twitter?.message}
         />
       </div>
 
