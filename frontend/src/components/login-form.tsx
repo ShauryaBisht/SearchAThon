@@ -47,10 +47,7 @@ const {setUser}=useAuth()
     try {
       const response=await login(data);
       console.log(`Login Successful`,response)
-      setUser(response.data.data)
-        reset();
-        navigate('/')
-        const userData = response.data?.user || response.user || response.data?.data?.user;
+        const userData = response.data?.user 
 
     if (userData) {
       setUser(userData);

@@ -3,6 +3,7 @@ import { useAuth } from "./UserContext"
 import { Badge } from "./ui/badge";
 import { FaGithub } from "react-icons/fa6";
 import { FaLinkedin } from "react-icons/fa";
+import { NavLink } from "react-router-dom";
 
 function Profile() {
     const { user } = useAuth();
@@ -50,6 +51,7 @@ function Profile() {
                     <div className="flex gap-9 items-center ">
                         <Button variant='default'>Upload Photo</Button>
                         <Button variant='destructive'>Delete Photo</Button>
+                        <NavLink to={`/profile/edit/${user?._id}`}><Button className="secondary">✏️ Edit Profile</Button></NavLink>
                     </div>
                 </div>
 
