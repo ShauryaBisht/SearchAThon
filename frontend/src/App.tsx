@@ -10,6 +10,7 @@ import ProtectedRoute from './components/ProtectedRoute'
 import { useAuth } from './components/UserContext'
 import Profile from './components/Profile'
 import ProfileForm from './components/Profileform'
+import Teams from './components/Teams'
 function App() {
   const { loading,user } = useAuth();
 
@@ -28,7 +29,7 @@ function App() {
      <Route path='/login' element={<Login />} />
      <Route path='/signup' element={<Signup />} />
 
-   
+      <Route path="/teams" element={ <ProtectedRoute><Teams /></ProtectedRoute>}></Route>
       <Route path="/profile/:id" element={ <ProtectedRoute><Profile /></ProtectedRoute>}></Route>
       <Route path="/profile/edit/:id" element={ <ProtectedRoute><ProfileForm /></ProtectedRoute>}></Route>
     

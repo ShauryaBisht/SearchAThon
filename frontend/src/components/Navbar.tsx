@@ -35,7 +35,7 @@ export default function Navbar() {
         <nav className="hidden md:block">
           <ul className="flex items-center gap-10 text-slate-600">
             <NavLink to='/' className={({ isActive }) =>`transition-colors ${isActive? "text-blue-600 dark:text-blue-400 font-semibold": "text-slate-700 dark:text-slate-300 hover:text-blue-500 dark:hover:text-blue-400"}`}>Home</NavLink>
-            <NavLink to='/explore'  className={({ isActive }) =>`transition-colors ${isActive? "text-blue-600 dark:text-blue-400 font-semibold": "text-slate-700 dark:text-slate-300 hover:text-blue-500 dark:hover:text-blue-400"}`}>Explore</NavLink>
+            <NavLink to='/teams'  className={({ isActive }) =>`transition-colors ${isActive? "text-blue-600 dark:text-blue-400 font-semibold": "text-slate-700 dark:text-slate-300 hover:text-blue-500 dark:hover:text-blue-400"}`}>Teams</NavLink>
             <NavLink to='/contact-us' className={({ isActive }) =>`transition-colors ${isActive? "text-blue-600 dark:text-blue-400 font-semibold": "text-slate-700 dark:text-slate-300 hover:text-blue-500 dark:hover:text-blue-400"}`}>Contact Us</NavLink>
             <li><ModeToggle /></li>
           </ul>
@@ -60,7 +60,7 @@ export default function Navbar() {
                 </div>
               <div className="mt-8 flex flex-col gap-4 p-2">
                 <NavLink to='/'><button className="text-left text-lg">Home</button></NavLink>
-                <NavLink to='/explore'><button className="text-left text-lg">Explore</button></NavLink>
+                <NavLink to='/teams'><button className="text-left text-lg">Teams</button></NavLink>
                 <NavLink to='/contact-us'><button className="text-left text-lg">Contact Us</button></NavLink>
                 <button className="text-left text-lg"></button>
                 <div className="pt-4 flex flex-col gap-3">
