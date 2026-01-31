@@ -65,7 +65,7 @@ export default function ProfileForm({ defaultValues }: Props) {
         Profile Details
       </h2>
 
-      {/* Role */}
+    
       <InputField
         label="Your Role"
         error={errors.role?.message}
@@ -78,7 +78,7 @@ export default function ProfileForm({ defaultValues }: Props) {
         }
       />
 
-      {/* Experience */}
+
       <div>
         <label className="block mb-1 text-slate-300">Experience Level</label>
         <select
@@ -117,7 +117,6 @@ export default function ProfileForm({ defaultValues }: Props) {
         }
       />
 
-      {/* Bio */}
       <div>
         <label className="block mb-1 text-slate-300">Bio</label>
         <textarea
@@ -128,7 +127,7 @@ export default function ProfileForm({ defaultValues }: Props) {
         />
       </div>
 
-      {/* Skills */}
+    
       <InputField
         label="Skills (comma separated)"
         input={
@@ -140,7 +139,7 @@ export default function ProfileForm({ defaultValues }: Props) {
         }
       />
 
-      {/* Social Links */}
+     
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <InputField
           label="GitHub"
@@ -178,7 +177,7 @@ export default function ProfileForm({ defaultValues }: Props) {
   )
 }
 
-/* Reusable Input Field */
+
 function InputField({
   label,
   input,

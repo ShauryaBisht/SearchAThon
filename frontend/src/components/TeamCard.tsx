@@ -26,7 +26,7 @@ export default function TeamCard() {
       <p className="text-slate-200 leading-relaxed text-sm">
         Building a team for a Web3 hackathon. Need strong frontend and smart
         contract devs. If you love shipping fast and building cool stuff,
-        join us 🚀
+        join us
       </p>
 
       <div className="rounded-lg overflow-hidden border border-slate-700">
