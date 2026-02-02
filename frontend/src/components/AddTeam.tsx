@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form"
 import type { SubmitHandler } from "react-hook-form"
-
+import axios from "axios"
 type TeamFormValues = {
   name: string
   description: string
@@ -14,18 +14,18 @@ type TeamFormValues = {
 export default function AddTeam() {
   const { register, handleSubmit, formState: { errors } } = useForm<TeamFormValues>()
 
-  const onSubmit: SubmitHandler<TeamFormValues> = (data) => {
+  const onSubmit: SubmitHandler<TeamFormValues> = async(data) => {
     const formatted = {
       ...data,
       rolesNeeded: data.rolesNeeded.split(",").map(r => r.trim())
     }
-
-    console.log("TEAM CREATED:", formatted)
+   const response=await axios.post('http://localhost:8000/api/add-team',formatted,{withCredentials:true})
+   console.log("Team created",response)
    
   }
 
   return (
-    <form
+    <form 
       onSubmit={handleSubmit(onSubmit)}
       className="max-w-3xl mx-auto mt-10 p-8 bg-slate-900/60 border border-slate-700 rounded-2xl backdrop-blur space-y-6"
     >

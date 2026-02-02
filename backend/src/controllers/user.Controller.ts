@@ -34,8 +34,24 @@ const addTeam=asyncHandler(async(req:Request,res:Response)=>{
     const {name,description,hackathonName,hackathonLocation,hackathonStartDate,hackathonEndDate,rolesNeeded}=req.body
     if(!name||!hackathonName||!hackathonLocation||!hackathonStartDate||!hackathonEndDate||!rolesNeeded)
           throw new ApiError(400,"Required Field Not Filled")
-    const team=await Team.create({name:name,hackathonName,hackathonLocation,hackathonEndDate,hackathonStartDate,hackathonDescription:description})
-    
+    const userId = req.user?._id     
+    const team = await Team.create({
+    name,
+    hackathonDescription:description,
+    hackathonName,
+    hackathonLocation,
+    hackathonStartDate: new Date(hackathonStartDate),
+    hackathonEndDate: new Date(hackathonEndDate),
+    rolesNeeded,
+    createdBy: userId,
+    members: [userId], 
+  })
+    res.status(201).json(new ApiResponse(200,team,"Team created Successfully"))
 })
 
-export {editProfile}
+const getTeams=asyncHandler(async(req:Request,res:Response)=>{
+    const team=await Team.find();
+    res.status(200).json(new ApiResponse(200,team,"Success"))
+})
+
+export {editProfile,addTeam,getTeams}
