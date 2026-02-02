@@ -1,4 +1,5 @@
 import { Users, Mail, BookmarkPlus } from "lucide-react"
+import { Link } from "react-router-dom"
 
 type Team = {
   name: string
@@ -9,6 +10,7 @@ type Team = {
   hackathonEndDate: string
   rolesNeeded: string[]
   createdBy: {
+    _id:string,
     fullName: string
     avatar?: string
     role?: string
@@ -32,9 +34,9 @@ export default function TeamCard({ team }: { team: Team }) {
           </div>
         </div>
 
-        <button className="text-blue-500 text-sm font-medium hover:underline">
+        <Link to={`/profile/${team.createdBy._id}`}><button className="text-blue-500 text-sm font-medium hover:underline">
           View Profile
-        </button>
+        </button></Link>
       </div>
       <h2 className="text-xl text-white font-semibold">{team.name}</h2>
       <div className="text-sm text-slate-300 space-y-1">

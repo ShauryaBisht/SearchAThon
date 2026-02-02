@@ -50,8 +50,10 @@ const addTeam=asyncHandler(async(req:Request,res:Response)=>{
 })
 
 const getTeams=asyncHandler(async(req:Request,res:Response)=>{
-    const team=await Team.find();
-    res.status(200).json(new ApiResponse(200,team,"Success"))
+    const teams=await Team.find()
+    .populate("createdBy", "userId fullName role avatar")
+    .sort({ createdAt: -1 })
+    res.status(200).json(new ApiResponse(200,teams,"Success"))
 })
 
 export {editProfile,addTeam,getTeams}
