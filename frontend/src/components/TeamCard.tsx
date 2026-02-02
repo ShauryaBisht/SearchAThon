@@ -1,46 +1,64 @@
 import { Users, Mail, BookmarkPlus } from "lucide-react"
 
-export default function TeamCard() {
+type Team = {
+  name: string
+  description: string
+  hackathonName: string
+  hackathonLocation: string
+  hackathonStartDate: string
+  hackathonEndDate: string
+  rolesNeeded: string[]
+  createdBy: {
+    fullName: string
+    avatar?: string
+    role?: string
+  }
+}
+
+export default function TeamCard({ team }: { team: Team }) {
   return (
-    <div className="w-full max-w-2xl mx-auto bg-slate-900/60 border border-slate-700 rounded-xl p-5 backdrop-blur space-y-4 shadow-md mt-8">
+    <div className="w-full max-w-2xl mx-auto bg-slate-900/60 border border-slate-700 rounded-xl p-5 backdrop-blur space-y-4 shadow-md mt-6">
 
       <div className="flex items-start justify-between">
         <div className="flex gap-3">
           <img
-            src="/avatar.png"
-            alt="user"
+            src={team.createdBy.avatar || "/avatar.png"}
+            alt="creator"
             className="w-12 h-12 rounded-full object-cover border border-slate-600"
           />
           <div>
-            <h3 className="text-white font-semibold text-lg">Anshit Rangra</h3>
-            <p className="text-slate-400 text-sm">
-              Full Stack | Rust | Blockchain | Web3
-            </p>
-            <p className="text-slate-500 text-xs">Posted 5h ago</p>
+            <h3 className="text-white font-semibold text-lg">{team.createdBy.fullName}</h3>
+            <p className="text-slate-400 text-sm">{team.createdBy.role}</p>
           </div>
         </div>
+
         <button className="text-blue-500 text-sm font-medium hover:underline">
           View Profile
         </button>
       </div>
-      <p className="text-slate-200 leading-relaxed text-sm">
-        Building a team for a Web3 hackathon. Need strong frontend and smart
-        contract devs. If you love shipping fast and building cool stuff,
-        join us
-      </p>
-
-      <div className="rounded-lg overflow-hidden border border-slate-700">
-        <img
-          src="/post-image.jpg"
-          alt="hackathon"
-          className="w-full object-cover"
-        />
+      <h2 className="text-xl text-white font-semibold">{team.name}</h2>
+      <div className="text-sm text-slate-300 space-y-1">
+        <p><span className="text-blue-400 font-medium">Hackathon:</span> {team.hackathonName}</p>
+        <p><span className="text-blue-400 font-medium">Location:</span> {team.hackathonLocation}</p>
+        <p>
+          <span className="text-blue-400 font-medium">Dates:</span>{" "}
+          {team.hackathonStartDate} – {team.hackathonEndDate}
+        </p>
       </div>
 
+      <p className="text-slate-200 text-sm leading-relaxed">
+        {team.description}
+      </p>
+
       <div className="flex flex-wrap gap-2 text-xs">
-        <span className="bg-slate-800 text-slate-300 px-3 py-1 rounded-full">Frontend</span>
-        <span className="bg-slate-800 text-slate-300 px-3 py-1 rounded-full">Blockchain</span>
-        <span className="bg-slate-800 text-slate-300 px-3 py-1 rounded-full">UI/UX</span>
+        {team.rolesNeeded.map((role, i) => (
+          <span
+            key={i}
+            className="bg-slate-800 text-slate-300 px-3 py-1 rounded-full"
+          >
+            {role}
+          </span>
+        ))}
       </div>
 
       <div className="border-t border-slate-700" />

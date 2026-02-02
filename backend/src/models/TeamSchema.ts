@@ -65,4 +65,4 @@ const teamSchema= new mongoose.Schema<Team>({
      }]
 })
 
-export default mongoose.model<Team>("Team",teamSchema)
+export  const Team= mongoose.model<Team>("Team",teamSchema)

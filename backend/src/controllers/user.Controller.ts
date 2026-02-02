@@ -4,6 +4,7 @@ import { Request,Response } from "express";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import { Team } from "../models/TeamSchema.js";
 
 
 
@@ -29,5 +30,12 @@ const editProfile=asyncHandler(async(req:Request,res:Response)=>{
     
 })
 
+const addTeam=asyncHandler(async(req:Request,res:Response)=>{
+    const {name,description,hackathonName,hackathonLocation,hackathonStartDate,hackathonEndDate,rolesNeeded}=req.body
+    if(!name||!hackathonName||!hackathonLocation||!hackathonStartDate||!hackathonEndDate||!rolesNeeded)
+          throw new ApiError(400,"Required Field Not Filled")
+    const team=await Team.create({name:name,hackathonName,hackathonLocation,hackathonEndDate,hackathonStartDate,hackathonDescription:description})
+    
+})
 
 export {editProfile}

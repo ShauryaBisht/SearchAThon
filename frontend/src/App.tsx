@@ -11,6 +11,7 @@ import { useAuth } from './components/UserContext'
 import Profile from './components/Profile'
 import ProfileForm from './components/Profileform'
 import Teams from './components/Teams'
+import AddTeam from './components/addTeam'
 function App() {
   const { loading,user } = useAuth();
 
@@ -32,7 +33,7 @@ function App() {
       <Route path="/teams" element={ <ProtectedRoute><Teams /></ProtectedRoute>}></Route>
       <Route path="/profile/:id" element={ <ProtectedRoute><Profile /></ProtectedRoute>}></Route>
       <Route path="/profile/edit/:id" element={ <ProtectedRoute><ProfileForm /></ProtectedRoute>}></Route>
-    
+      <Route path='/add-team' element={<ProtectedRoute><AddTeam /></ProtectedRoute>}></Route>
 
      </Routes>
      <Footer />

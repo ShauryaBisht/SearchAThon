@@ -120,7 +120,7 @@ export default function ProfileForm({ defaultValues }: Props) {
       <div>
         <label className="block mb-1 text-slate-300">Bio</label>
         <textarea
-          {...register("bio", { maxLength: 300 })}
+          {...register("bio", { maxLength: 280 })}
           rows={4}
           className="input"
           placeholder="Tell teams what you're good at..."
