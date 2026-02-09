@@ -44,7 +44,7 @@ export default function TeamCard({ team }: { team: Team }) {
         <p><span className="text-blue-400 font-medium">Location:</span> {team.hackathonLocation}</p>
         <p>
           <span className="text-blue-400 font-medium">Dates:</span>{" "}
-          {team.hackathonStartDate} – {team.hackathonEndDate}
+          {new Date(team.hackathonStartDate).toLocaleDateString()} – {new Date(team.hackathonEndDate).toLocaleDateString()}
         </p>
       </div>
 
