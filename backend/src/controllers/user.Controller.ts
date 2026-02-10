@@ -31,7 +31,7 @@ const editProfile=asyncHandler(async(req:Request,res:Response)=>{
 })
 
 const addTeam=asyncHandler(async(req:Request,res:Response)=>{
-    const {name,description,hackathonName,hackathonLocation,hackathonStartDate,hackathonEndDate,rolesNeeded}=req.body
+    const {name,description,hackathonName,hackathonLocation,hackathonStartDate,hackathonEndDate,rolesNeeded,membersRequired}=req.body
     if(!name||!hackathonName||!hackathonLocation||!hackathonStartDate||!hackathonEndDate||!rolesNeeded)
           throw new ApiError(400,"Required Field Not Filled")
     const userId = req.user?._id     
@@ -43,6 +43,7 @@ const addTeam=asyncHandler(async(req:Request,res:Response)=>{
     hackathonStartDate: new Date(hackathonStartDate),
     hackathonEndDate: new Date(hackathonEndDate),
     rolesNeeded,
+    membersRequired,
     createdBy: userId,
     members: [userId], 
   })

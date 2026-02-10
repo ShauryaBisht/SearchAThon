@@ -7,6 +7,7 @@ type TeamFormValues = {
   hackathonName: string
   hackathonLocation: string
   hackathonStartDate: string
+  membersRequired:number
   hackathonEndDate: string
   rolesNeeded: string
 }
@@ -58,7 +59,9 @@ export default function AddTeam() {
         <label className="block text-slate-300 mb-1">Team Description</label>
         <textarea {...register("description")} rows={4} className="input" />
       </div>
-
+       <Input label="Number of Members Needed" error={errors.name?.message}>
+        <input {...register("membersRequired", { required: "Number of members required" })} className="input" />
+      </Input>
       <Input label="Roles Needed (comma separated)">
         <input {...register("rolesNeeded",{required:true})} placeholder="Frontend, Backend, UI/UX" className="input" />
       </Input>

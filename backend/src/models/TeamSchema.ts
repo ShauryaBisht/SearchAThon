@@ -9,6 +9,7 @@ interface Team {
     createdBy: Types.ObjectId,
     hackathonName: string,
     hackathonLocation: string,
+    membersRequired:number,
     hackathonStartDate: Date,
     hackathonEndDate: Date,
     hackathonDescription?: string,
@@ -30,6 +31,10 @@ const teamSchema= new mongoose.Schema<Team>({
         type:mongoose.Schema.Types.ObjectId,
         ref:"User"
      }],
+     membersRequired:{
+         required:true,
+         type:Number
+     },
      description:{
         required:false,
         type:String

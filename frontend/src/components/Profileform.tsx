@@ -24,36 +24,33 @@ export default function ProfileForm({ defaultValues }: Props) {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<ProfileFormValues>({
-    defaultValues: {
-    bio: "",
-    role: "",
-    experienceLevel: "",
-    preferredRole: "",
-    location: "",
-    skills: "",
-    github: "",
-    linkedin: "",
-    ...defaultValues,
-  },
-  })
-  const navigate=useNavigate()
-  const onSubmit: SubmitHandler<ProfileFormValues> = async(data) => {
+  } = useForm<ProfileFormValues>() 
+
+  const navigate = useNavigate()
+
+  const onSubmit: SubmitHandler<ProfileFormValues> = async (data) => {
+   
+    const cleanedData = Object.fromEntries(
+      Object.entries(data).filter(([_, value]) => value !== "")
+    )
+
     const formattedData = {
-      ...data,
-      skills: data.skills
-        ? data.skills.split(",").map((skill) => skill.trim())
-        : [],
-    }
-    try {
-      const response=await axios.put("http://localhost:8000/api/profile/edit",formattedData,{withCredentials:true})
-      console.log("Profile updated:", response.data);
-      navigate('/profile')
-    } catch (error) {
-      console.log("Error on editing profile",error)
+      ...cleanedData,
+      skills: cleanedData.skills
+        ? cleanedData.skills.split(",").map((s) => s.trim())
+        : undefined,
     }
 
-   
+    try {
+      await axios.put(
+        "http://localhost:8000/api/profile/edit",
+        formattedData,
+        { withCredentials: true }
+      )
+      navigate("/profile")
+    } catch (error) {
+      console.log("Error updating profile", error)
+    }
   }
 
   return (
@@ -65,105 +62,84 @@ export default function ProfileForm({ defaultValues }: Props) {
         Profile Details
       </h2>
 
-    
-      <InputField
-        label="Your Role"
-        error={errors.role?.message}
-        input={
-          <input
-            {...register("role", { required: "Role is required" })}
-            placeholder="Frontend Developer"
-            className="input"
-          />
-        }
-      />
-
+      <InputField label="Your Role" error={errors.role?.message}>
+        <input
+          {...register("role")}
+          placeholder={defaultValues?.role || "Frontend Developer"}
+          className="input"
+        />
+      </InputField>
 
       <div>
         <label className="block mb-1 text-slate-300">Experience Level</label>
         <select
-          {...register("experienceLevel", { required: "Select a level" })}
+          {...register("experienceLevel")}
           className="input"
+          defaultValue=""
         >
-          <option value="">Select level</option>
+          <option value="">
+            {defaultValues?.experienceLevel || "Select level"}
+          </option>
           <option value="Beginner">Beginner</option>
           <option value="Intermediate">Intermediate</option>
           <option value="Advanced">Advanced</option>
         </select>
-        {errors.experienceLevel && (
-          <p className="text-red-400 text-sm mt-1">{errors.experienceLevel.message}</p>
-        )}
       </div>
 
-      <InputField
-        label="Preferred Role in Team"
-        input={
-          <input
-            {...register("preferredRole")}
-            placeholder="UI / Frontend"
-            className="input"
-          />
-        }
-      />
+      <InputField label="Preferred Role in Team">
+        <input
+          {...register("preferredRole")}
+          placeholder={defaultValues?.preferredRole || "UI / Frontend"}
+          className="input"
+        />
+      </InputField>
 
-      <InputField
-        label="Location"
-        input={
-          <input
-            {...register("location")}
-            placeholder="Bengaluru"
-            className="input"
-          />
-        }
-      />
+      <InputField label="Location">
+        <input
+          {...register("location")}
+          placeholder={defaultValues?.location || "Bengaluru"}
+          className="input"
+        />
+      </InputField>
 
       <div>
         <label className="block mb-1 text-slate-300">Bio</label>
         <textarea
-          {...register("bio", { maxLength: 280 })}
+          {...register("bio")}
           rows={4}
           className="input"
-          placeholder="Tell teams what you're good at..."
+          placeholder={defaultValues?.bio || "Tell teams what you're good at..."}
         />
       </div>
 
-    
-      <InputField
-        label="Skills (comma separated)"
-        input={
+      <InputField label="Skills (comma separated)">
+        <input
+          {...register("skills")}
+          placeholder={
+            defaultValues?.skills
+              ? defaultValues.skills
+              : "React, Node, MongoDB"
+          }
+          className="input"
+        />
+      </InputField>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <InputField label="GitHub" error={errors.github?.message}>
           <input
-            {...register("skills")}
-            placeholder="React, Node, MongoDB"
+            {...register("github")}
+            placeholder={defaultValues?.github || "https://github.com/..."}
             className="input"
           />
-        }
-      />
+        </InputField>
 
-     
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <InputField
-          label="GitHub"
-          input={
-            <input
-              {...register("github", { pattern: { value: /^https?:\/\//, message: "Enter valid URL" } })}
-              placeholder="https://github.com/..."
-              className="input"
-            />
-          }
-          error={errors.github?.message}
-        />
-
-        <InputField
-          label="LinkedIn"
-          input={
-            <input
-              {...register("linkedin", { pattern: { value: /^https?:\/\//, message: "Enter valid URL" } })}
-              placeholder="https://linkedin.com/in/..."
-              className="input"
-            />
-          }
-          error={errors.linkedin?.message}
-        />
+        <InputField label="LinkedIn" error={errors.linkedin?.message}>
+          <input
+            {...register("linkedin")}
+            placeholder={defaultValues?.linkedin || "https://linkedin.com/in/..."}
+            className="input"
+          />
+        </InputField>
       </div>
 
       <button
@@ -177,20 +153,19 @@ export default function ProfileForm({ defaultValues }: Props) {
   )
 }
 
-
 function InputField({
   label,
-  input,
+  children,
   error,
 }: {
   label: string
-  input: React.ReactNode
+  children: React.ReactNode
   error?: string
 }) {
   return (
     <div>
       <label className="block mb-1 text-slate-300">{label}</label>
-      {input}
+      {children}
       {error && <p className="text-red-400 text-sm mt-1">{error}</p>}
     </div>
   )
