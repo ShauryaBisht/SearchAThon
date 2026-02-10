@@ -21,7 +21,7 @@ function Teams() {
     }
 
     fetchTeams()
-  }, [])
+  }, [teams])
 
   return (
     <main>

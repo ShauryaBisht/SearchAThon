@@ -1,16 +1,20 @@
-import { Users, Mail, BookmarkPlus } from "lucide-react"
+import { Users } from "lucide-react"
 import { Link } from "react-router-dom"
-
+import { MdDelete } from "react-icons/md"
+import { useAuth } from "./UserContext"
+import axios from "axios"
 type Team = {
+  _id:string
   name: string
   description: string
   hackathonName: string
   hackathonLocation: string
   hackathonStartDate: string
   hackathonEndDate: string
+  membersRequired: number
   rolesNeeded: string[]
   createdBy: {
-    _id:string,
+    _id: string,
     fullName: string
     avatar?: string
     role?: string
@@ -18,6 +22,22 @@ type Team = {
 }
 
 export default function TeamCard({ team }: { team: Team }) {
+  const {user}=useAuth()
+
+  const handleDelete = async () => {
+  
+
+  try {
+    await axios.delete(
+      `http://localhost:8000/api/team/${team._id}`,
+      { withCredentials: true }
+    )
+   
+  } catch (err) {
+    console.error("Failed to delete team", err)
+  }
+}
+
   return (
     <div className="w-full max-w-2xl mx-auto bg-slate-900/60 border border-slate-700 rounded-xl p-5 backdrop-blur space-y-4 shadow-md mt-6">
 
@@ -51,7 +71,7 @@ export default function TeamCard({ team }: { team: Team }) {
       <p className="text-slate-200 text-sm leading-relaxed">
         {team.description}
       </p>
-
+      <p className="text-slate-200 text-sm leading-relaxed">{team.membersRequired}</p>
       <div className="flex flex-wrap gap-2 text-xs">
         {team.rolesNeeded.map((role, i) => (
           <span
@@ -64,29 +84,25 @@ export default function TeamCard({ team }: { team: Team }) {
       </div>
 
       <div className="border-t border-slate-700" />
+      <div className="flex justify-evenly gap-4 text-sm">
 
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-sm">
-
-        <button className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg transition">
+        <button className="flex items-center gap-2 border border-slate-600 text-slate-300 hover:bg-slate-800 py-2 px-4 rounded-lg transition">
           <Users size={16} />
           View Team
         </button>
-
-        <button className="flex items-center justify-center gap-2 border border-slate-600 text-slate-300 hover:bg-slate-800 py-2 rounded-lg transition">
+       
+        <button className= {(user?._id==team.createdBy._id)?"flex items-center bg-red-700 gap-2 border border-slate-600 text-slate-300 hover:bg-red-500 py-2 px-4 rounded-lg transition":"hidden"}
+        onClick={handleDelete}>
+          <MdDelete size={16} />
+          Delete Team
+        </button>
+        
+        <button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition">
           Join Request
         </button>
 
-        <button className="flex items-center justify-center gap-2 border border-slate-600 text-slate-300 hover:bg-slate-800 py-2 rounded-lg transition">
-          <BookmarkPlus size={16} />
-          Save
-        </button>
-
-        <button className="flex items-center justify-center gap-2 border border-slate-600 text-slate-300 hover:bg-slate-800 py-2 rounded-lg transition">
-          <Mail size={16} />
-          Contact
-        </button>
-
       </div>
+
     </div>
   )
 }

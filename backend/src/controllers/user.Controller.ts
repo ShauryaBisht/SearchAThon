@@ -57,4 +57,22 @@ const getTeams=asyncHandler(async(req:Request,res:Response)=>{
     res.status(200).json(new ApiResponse(200,teams,"Success"))
 })
 
-export {editProfile,addTeam,getTeams}
+const deleteTeam=asyncHandler(async(req:Request,res:Response)=>{
+   const { teamId } = req.params
+  const userId = req.user?._id
+   if (!teamId) {
+    throw new ApiError(400, "Team ID is required")
+  }
+    const team = await Team.findById(teamId)
+
+  if (!team) {
+    throw new ApiError(404, "Team not found")
+  }
+   await Team.findByIdAndDelete(teamId)
+
+  res.status(200).json(
+    new ApiResponse(200, null, "Team deleted successfully")
+  )
+})
+
+export {editProfile,addTeam,getTeams,deleteTeam}
