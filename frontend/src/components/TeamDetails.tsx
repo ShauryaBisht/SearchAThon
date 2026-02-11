@@ -112,9 +112,9 @@ export default function TeamDetails() {
 
     
       <div>
-        <h2 className="text-lg text-blue-500 font-semibold mb-2">
+        {team.description && <h2 className="text-lg text-blue-500 font-semibold mb-2">
           About This Team
-        </h2>
+        </h2>}
         <p className="text-slate-200">{team.description}</p>
       </div>
 

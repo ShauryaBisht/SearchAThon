@@ -77,7 +77,9 @@ const deleteTeam=asyncHandler(async(req:Request,res:Response)=>{
 
 const getTeamById=asyncHandler(async(req:Request,res:Response)=>{
    const {teamId}=req.params
-   const team=await Team.findById(teamId);
+   const team=await Team.findById(teamId)
+   .populate("members", "fullName avatar")
+  .populate("createdBy", "fullName avatar role")
    if (!team) {
     throw new ApiError(404, "Team not found")
   }
