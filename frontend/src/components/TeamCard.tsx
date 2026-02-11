@@ -63,7 +63,7 @@ export default function TeamCard({ team }: { team: Team }) {
         <p><span className="text-blue-400 font-medium">Hackathon:</span> {team.hackathonName}</p>
         <p><span className="text-blue-400 font-medium">Location:</span> {team.hackathonLocation}</p>
         <p>
-          <span className="text-blue-400 font-medium">Dates:</span>{" "}
+          <span className="text-blue-400 font-medium">Dates: </span>
           {new Date(team.hackathonStartDate).toLocaleDateString()} – {new Date(team.hackathonEndDate).toLocaleDateString()}
         </p>
       </div>
@@ -71,7 +71,10 @@ export default function TeamCard({ team }: { team: Team }) {
       <p className="text-slate-200 text-sm leading-relaxed">
         {team.description}
       </p>
-      <p className="text-slate-200 text-sm leading-relaxed">{team.membersRequired}</p>
+      <p className="text-slate-300">
+          <span className="text-blue-400 font-medium text-sm">Members Required: </span>
+          {team.membersRequired}
+        </p>
       <div className="flex flex-wrap gap-2 text-xs">
         {team.rolesNeeded.map((role, i) => (
           <span

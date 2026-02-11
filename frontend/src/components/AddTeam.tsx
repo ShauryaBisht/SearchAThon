@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form"
 import type { SubmitHandler } from "react-hook-form"
 import axios from "axios"
+import { useNavigate } from "react-router-dom"
 type TeamFormValues = {
   name: string
   description: string
@@ -14,7 +15,7 @@ type TeamFormValues = {
 
 export default function AddTeam() {
   const { register, handleSubmit, formState: { errors } } = useForm<TeamFormValues>()
-
+  const navigate=useNavigate()
   const onSubmit: SubmitHandler<TeamFormValues> = async(data) => {
     const formatted = {
       ...data,
@@ -22,6 +23,7 @@ export default function AddTeam() {
     }
    const response=await axios.post('http://localhost:8000/api/add-team',formatted,{withCredentials:true})
    console.log("Team created",response)
+   navigate('/teams')
    
   }
 
