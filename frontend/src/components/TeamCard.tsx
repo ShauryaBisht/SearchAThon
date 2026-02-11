@@ -86,10 +86,10 @@ export default function TeamCard({ team }: { team: Team }) {
       <div className="border-t border-slate-700" />
       <div className="flex justify-evenly gap-4 text-sm">
 
-        <button className="flex items-center gap-2 border border-slate-600 text-slate-300 hover:bg-slate-800 py-2 px-4 rounded-lg transition">
+        <Link to={`/teams/${team._id}`}><button className="flex items-center gap-2 border border-slate-600 text-slate-300 hover:bg-slate-800 py-2 px-4 rounded-lg transition">
           <Users size={16} />
           View Team
-        </button>
+        </button></Link>
        
         <button className= {(user?._id==team.createdBy._id)?"flex items-center bg-red-700 gap-2 border border-slate-600 text-slate-300 hover:bg-red-500 py-2 px-4 rounded-lg transition":"hidden"}
         onClick={handleDelete}>

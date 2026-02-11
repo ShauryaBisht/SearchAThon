@@ -75,4 +75,13 @@ const deleteTeam=asyncHandler(async(req:Request,res:Response)=>{
   )
 })
 
-export {editProfile,addTeam,getTeams,deleteTeam}
+const getTeamById=asyncHandler(async(req:Request,res:Response)=>{
+   const {teamId}=req.params
+   const team=await Team.findById(teamId);
+   if (!team) {
+    throw new ApiError(404, "Team not found")
+  }
+  res.status(200).json(new ApiResponse(200,team,"Success"))
+  })
+
+export {editProfile,addTeam,getTeams,deleteTeam,getTeamById}
