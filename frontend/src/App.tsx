@@ -11,9 +11,9 @@ import { useAuth } from './components/UserContext'
 import Profile from './components/Profile'
 import ProfileForm from './components/Profileform'
 import Teams from './components/Teams'
-import AddTeam from './components/addTeam'
+import AddTeam from './components/AddTeam'
 function App() {
-  const { loading,user } = useAuth();
+  const { loading } = useAuth();
 
   if (loading) return <div>Loading...</div>;
 

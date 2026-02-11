@@ -92,7 +92,7 @@ function Hero(){
       <div className="w-24 h-[2px] bg-slate-200 rounded-full"></div>
       </div>
       <div className="flex justify-center mt-10">
-      <NavLink to='/signup'><Button className="bg-blue-600 px-8 py-3 text-lg rounded-xl hover:bg-blue-700 transition">Get Started</Button></NavLink>
+      <NavLink to={(user)?'/teams':'/signup'}><Button className="bg-blue-600 px-8 py-3 text-lg rounded-xl hover:bg-blue-700 transition">Get Started</Button></NavLink>
       </div>
      </div>
       </main>
