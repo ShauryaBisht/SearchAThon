@@ -71,7 +71,7 @@ export default function TeamCard({ team }: { team: Team }) {
       <p className="text-slate-200 text-sm leading-relaxed">
         {team.description}
       </p>
-      <p className="text-slate-300">
+      <p className="text-slate-300 text-sm">
           <span className="text-blue-400 font-medium text-sm">Members Required: </span>
           {team.membersRequired}
         </p>

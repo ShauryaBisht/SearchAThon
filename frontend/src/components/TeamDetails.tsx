@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react"
-import { useParams, useNavigate } from "react-router-dom"
+import { useParams, useNavigate, Link } from "react-router-dom"
 import axios from "axios"
 import { useAuth } from "./UserContext"
 import { Users, CalendarDays, MapPin } from "lucide-react"
+import { Button } from "./ui/button"
+import { MdDelete } from "react-icons/md"
+import { MdEdit } from "react-icons/md";
 
 type Team = {
   _id: string
@@ -73,6 +76,9 @@ export default function TeamDetails() {
     } catch (err) {
       console.error(err)
     }
+  }
+  const handleEdit=async()=>{
+
   }
 
   if (loading) return <p className="text-center mt-10">Loading...</p>
@@ -162,12 +168,24 @@ export default function TeamDetails() {
         )}
 
         {isCreator && (
-          <button
+          <Button
             onClick={handleDelete}
-            className="bg-red-600 hover:bg-red-700 px-6 py-2 rounded-lg text-white transition"
+            variant='destructive'
+            className=" bg-red-600 hover:bg-red-700 transition"
           >
+             <MdDelete size={16} />
             Delete Team
-          </button>
+          </Button>
+        )}
+         {isCreator && (
+          <Link to={`/teams/edit/${team._id}`}>
+          <Button
+            onClick={handleEdit}
+            className=""
+          >
+           <MdEdit size={16}/>
+            Edit Team
+          </Button></Link>
         )}
       </div>
     </div>

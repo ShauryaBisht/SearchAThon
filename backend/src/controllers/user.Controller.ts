@@ -86,4 +86,49 @@ const getTeamById=asyncHandler(async(req:Request,res:Response)=>{
   res.status(200).json(new ApiResponse(200,team,"Success"))
   })
 
-export {editProfile,addTeam,getTeams,deleteTeam,getTeamById}
+const editTeam=asyncHandler(async(req:Request,res:Response)=>{
+  const {teamId}=req.params
+   const userId = req.user?._id
+
+  if (!teamId) {
+    throw new ApiError(400, "Team ID is required")
+  }
+  const team = await Team.findById(teamId)
+  if (!team) {
+    throw new ApiError(404, "Team not found")
+  }
+  if (team.createdBy.toString() !== userId?.toString()) {
+    throw new ApiError(403, "Not authorized to edit this team")
+  }
+
+  const {
+    name,
+    description,
+    hackathonName,
+    hackathonLocation,
+    hackathonStartDate,
+    hackathonEndDate,
+    rolesNeeded,
+    membersRequired,
+  } = req.body
+
+  if (name !== undefined) team.name = name
+  if (description !== undefined) team.description = description
+  if (hackathonName !== undefined) team.hackathonName = hackathonName
+  if (hackathonLocation !== undefined) team.hackathonLocation = hackathonLocation
+  if (hackathonStartDate !== undefined)
+    team.hackathonStartDate = new Date(hackathonStartDate)
+  if (hackathonEndDate !== undefined)
+    team.hackathonEndDate = new Date(hackathonEndDate)
+  if (rolesNeeded !== undefined) team.rolesNeeded = rolesNeeded
+  if (membersRequired !== undefined)
+    team.membersRequired = membersRequired
+
+  await team.save()
+
+  res.status(200).json(
+    new ApiResponse(200, team, "Team updated successfully")
+  )
+})
+
+export {editProfile,addTeam,getTeams,deleteTeam,getTeamById,editTeam}
