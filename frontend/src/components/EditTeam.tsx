@@ -28,7 +28,7 @@ export default function EditTeam() {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting },
+    formState: {isSubmitting },
   } = useForm<TeamFormValues>()
 
 
