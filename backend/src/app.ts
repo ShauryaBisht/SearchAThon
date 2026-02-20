@@ -1,5 +1,6 @@
 import express from "express"
 import dotenv from "dotenv"
+dotenv.config({ path: "./.env" })
 import cookieParser from "cookie-parser"
 import cors from "cors"
 
@@ -7,7 +8,7 @@ import { connectDB } from "./db/db.js"
 import authRouter from "./routes/authRouter.js"
 import userRouter from "./routes/userRouter.js"
 
-dotenv.config({ path: "./.env" })
+
 
 const app = express()
 

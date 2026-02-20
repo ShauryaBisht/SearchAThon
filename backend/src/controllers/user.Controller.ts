@@ -5,6 +5,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { Team } from "../models/TeamSchema.js";
+import { uploadOnCloudinary } from "../utils/Cloudinary.js";
 
 
 
@@ -130,5 +131,23 @@ const editTeam=asyncHandler(async(req:Request,res:Response)=>{
     new ApiResponse(200, team, "Team updated successfully")
   )
 })
+const uploadProfilePic = asyncHandler(
+  async (req: Request, res: Response) => {
 
-export {editProfile,addTeam,getTeams,deleteTeam,getTeamById,editTeam}
+    if (!req.file) {
+      throw new ApiError(400, "File upload unsuccessful");
+    }
+
+    const cloudinaryresponse = await uploadOnCloudinary(req.file.path);
+
+    if (!cloudinaryresponse) {
+      throw new ApiError(500, "Cloudinary upload failed");
+    }
+
+    return res.status(200).json({
+      imageUrl: cloudinaryresponse.secure_url
+    });
+  }
+);
+
+export {editProfile,addTeam,getTeams,deleteTeam,getTeamById,editTeam,uploadProfilePic}

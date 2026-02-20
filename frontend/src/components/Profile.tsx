@@ -4,10 +4,20 @@ import { Badge } from "./ui/badge";
 import { FaGithub } from "react-icons/fa6";
 import { FaLinkedin } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
+import { useState } from "react";
+import axios from "axios";
 
 function Profile() {
     const { user } = useAuth();
+    const [profilePic, setProfilePic] = useState("/vite.svg");
     const skills = user?.skills ?? [];
+    const uploadPhoto = async (file: File) => {
+        const formData = new FormData()
+        formData.append("image", file)
+
+        const res = await axios.post("http://localhost:8000/api/avatar/upload", formData, { withCredentials: true })
+        setProfilePic(res.data.imageUrl);
+    };
     return (
         <>
             <div id="container" className="flex flex-col h-full w-full">
@@ -18,7 +28,7 @@ function Profile() {
                     <div className="flex gap-5">
                         <div className="flex items-center gap-3">
                             <div className="w-20 h-20 overflow-hidden rounded-full bg-white border-2 border-slate-400">
-                                <img src="/vite.svg" className="w-full h-full object-cover" />
+                                <img src={profilePic} className="w-full h-full object-cover" />
                             </div>
                             <div className="flex flex-col gap-0.5">
                                 <h1 className="text-blue-600 font-semibold">{user?.fullName}</h1>
@@ -49,7 +59,23 @@ function Profile() {
 
                     </div>
                     <div className="flex gap-9 items-center ">
-                        <Button variant='default'>Upload Photo</Button>
+                        <input
+                            type="file"
+                            id="profileUpload"
+                            hidden
+                            accept="image/*"
+                            onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) uploadPhoto(file);
+                            }}
+                        />
+
+                        <Button
+                            variant="default"
+                            onClick={() => document.getElementById("profileUpload")?.click()}
+                        >
+                            Upload Photo
+                        </Button>
                         <Button variant='destructive'>Delete Photo</Button>
                         <NavLink to={`/profile/edit/${user?._id}`}><Button className="secondary">✏️ Edit Profile</Button></NavLink>
                     </div>
