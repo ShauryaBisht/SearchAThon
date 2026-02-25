@@ -10,14 +10,27 @@ import axios from "axios";
 function Profile() {
     const { user } = useAuth();
     const [profilePic, setProfilePic] = useState("/vite.svg");
+    const [publicId, setPublicId] = useState<string | null>(null);
     const skills = user?.skills ?? [];
     const uploadPhoto = async (file: File) => {
         const formData = new FormData()
         formData.append("image", file)
 
         const res = await axios.post("http://localhost:8000/api/avatar/upload", formData, { withCredentials: true })
-        setProfilePic(res.data.imageUrl);
+        setProfilePic(res.data.imageUrl)
+        setPublicId(res.data.publicId)
     };
+    const deletePhoto = async () => {
+  if (!publicId) return;
+
+  await axios.delete("http://localhost:8000/api/avatar/delete", {
+    data: { publicId },
+    withCredentials: true
+  });
+
+  setProfilePic("/vite.svg");
+  setPublicId(null);
+};
     return (
         <>
             <div id="container" className="flex flex-col h-full w-full">
@@ -76,7 +89,7 @@ function Profile() {
                         >
                             Upload Photo
                         </Button>
-                        <Button variant='destructive'>Delete Photo</Button>
+                        <Button variant='destructive' onClick={deletePhoto}>Delete Photo</Button>
                         <NavLink to={`/profile/edit/${user?._id}`}><Button className="secondary">✏️ Edit Profile</Button></NavLink>
                     </div>
                 </div>

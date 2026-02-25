@@ -6,7 +6,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { Team } from "../models/TeamSchema.js";
 import { uploadOnCloudinary } from "../utils/Cloudinary.js";
-
+import { v2 as cloudinary } from "cloudinary";
 
 
 const editProfile=asyncHandler(async(req:Request,res:Response)=>{
@@ -145,9 +145,17 @@ const uploadProfilePic = asyncHandler(
     }
 
     return res.status(200).json({
-      imageUrl: cloudinaryresponse.secure_url
+      imageUrl: cloudinaryresponse.secure_url,
+      publicId:cloudinaryresponse.public_id
     });
   }
 );
+const deleteProfilePic=asyncHandler(async(req:Request,res:Response)=>{
+    const {publicId}=req.body
+    if(!publicId)
+      throw  new ApiError(400,"Public Id required")
+    await cloudinary.uploader.destroy(publicId)
+    return res.status(200).json(new ApiResponse(200,"Photo deleted successfully"))
+})
 
-export {editProfile,addTeam,getTeams,deleteTeam,getTeamById,editTeam,uploadProfilePic}
+export {editProfile,addTeam,getTeams,deleteTeam,getTeamById,editTeam,uploadProfilePic,deleteProfilePic}
