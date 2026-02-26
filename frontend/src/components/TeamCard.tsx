@@ -13,6 +13,8 @@ type Team = {
   hackathonEndDate: string
   membersRequired: number
   rolesNeeded: string[]
+  avatar:string,
+  publicId:string
   createdBy: {
     _id: string,
     fullName: string
@@ -44,7 +46,7 @@ export default function TeamCard({ team }: { team: Team }) {
       <div className="flex items-start justify-between">
         <div className="flex gap-3">
           <img
-            src={team.createdBy.avatar || "/avatar.png"}
+            src={team.avatar || "/avatar.png"}
             alt="creator"
             className="w-12 h-12 rounded-full object-cover border border-slate-600"
           />

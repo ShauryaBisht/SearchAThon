@@ -32,7 +32,7 @@ const editProfile=asyncHandler(async(req:Request,res:Response)=>{
 })
 
 const addTeam=asyncHandler(async(req:Request,res:Response)=>{
-    const {name,description,hackathonName,hackathonLocation,hackathonStartDate,hackathonEndDate,rolesNeeded,membersRequired}=req.body
+    const {name,description,hackathonName,hackathonLocation,hackathonStartDate,hackathonEndDate,rolesNeeded,membersRequired,avatar,avatarPublicId}=req.body
     if(!name||!hackathonName||!hackathonLocation||!hackathonStartDate||!hackathonEndDate||!rolesNeeded)
           throw new ApiError(400,"Required Field Not Filled")
     const userId = req.user?._id     
@@ -46,6 +46,8 @@ const addTeam=asyncHandler(async(req:Request,res:Response)=>{
     rolesNeeded,
     membersRequired,
     createdBy: userId,
+    avatar,
+  avatarPublicId,
     members: [userId], 
   })
     res.status(201).json(new ApiResponse(200,team,"Team created Successfully"))
@@ -157,5 +159,24 @@ const deleteProfilePic=asyncHandler(async(req:Request,res:Response)=>{
     await cloudinary.uploader.destroy(publicId)
     return res.status(200).json(new ApiResponse(200,"Photo deleted successfully"))
 })
+const uploadTeamPic = asyncHandler(
+  async (req: Request, res: Response) => {
 
-export {editProfile,addTeam,getTeams,deleteTeam,getTeamById,editTeam,uploadProfilePic,deleteProfilePic}
+    if (!req.file) {
+      throw new ApiError(400, "File upload unsuccessful");
+    }
+
+    const cloudinaryresponse = await uploadOnCloudinary(req.file.path);
+
+    if (!cloudinaryresponse) {
+      throw new ApiError(500, "Cloudinary upload failed");
+    }
+
+    return res.status(200).json({
+      imageUrl: cloudinaryresponse.secure_url,
+      publicId:cloudinaryresponse.public_id
+    });
+  }
+);
+
+export {editProfile,addTeam,getTeams,deleteTeam,getTeamById,editTeam,uploadProfilePic,deleteProfilePic,uploadTeamPic}
