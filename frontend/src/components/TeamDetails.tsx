@@ -4,8 +4,7 @@ import axios from "axios"
 import { useAuth } from "./UserContext"
 import { Users, CalendarDays, MapPin } from "lucide-react"
 import { Button } from "./ui/button"
-import { MdDelete } from "react-icons/md"
-import { MdEdit } from "react-icons/md";
+import { MdDelete, MdEdit } from "react-icons/md"
 
 type Team = {
   _id: string
@@ -17,6 +16,7 @@ type Team = {
   hackathonEndDate: string
   membersRequired: number
   rolesNeeded: string[]
+  avatar?: string
   members: {
     _id: string
     fullName: string
@@ -39,7 +39,8 @@ export default function TeamDetails() {
     const fetchTeam = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:8000/api/team/${id}`,{withCredentials:true}
+          `http://localhost:8000/api/team/${id}`,
+          { withCredentials: true }
         )
         setTeam(res.data.data)
       } catch (err) {
@@ -66,7 +67,6 @@ export default function TeamDetails() {
   }
 
   const handleDelete = async () => {
-   
     try {
       await axios.delete(
         `http://localhost:8000/api/team/${id}`,
@@ -77,9 +77,6 @@ export default function TeamDetails() {
       console.error(err)
     }
   }
-  const handleEdit=async()=>{
-
-  }
 
   if (loading) return <p className="text-center mt-10">Loading...</p>
   if (!team) return <p className="text-center mt-10">Team not found</p>
@@ -87,106 +84,120 @@ export default function TeamDetails() {
   const isCreator = user?._id === team.createdBy._id
 
   return (
-    <div className="max-w-4xl mx-auto mt-10 bg-slate-900/60 border border-slate-700 rounded-2xl p-8 space-y-6 backdrop-blur">
+    <div className="max-w-4xl mx-auto mt-10 bg-slate-900/60 border border-slate-700 rounded-2xl p-8 backdrop-blur flex flex-col md:flex-row gap-10">
+      
+      {/* LEFT CONTENT */}
+      <div className="flex-1 space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold text-white">{team.name}</h1>
+          <p className="text-slate-400 mt-1">
+            Created by {team.createdBy.fullName}
+          </p>
+        </div>
 
-    
-      <div>
-        <h1 className="text-3xl font-bold text-white">{team.name}</h1>
-        <p className="text-slate-400 mt-1">
-          Created by {team.createdBy.fullName}
-        </p>
-      </div>
+        <div className="space-y-2 text-slate-300 text-sm">
+          <p>
+            <span className="text-blue-400 font-medium">Hackathon:</span>{" "}
+            {team.hackathonName}
+          </p>
 
-     
-      <div className="space-y-2 text-slate-300 text-sm">
-        <p>
-          <span className="text-blue-400 font-medium">Hackathon:</span>{" "}
-          {team.hackathonName}
-        </p>
+          <p className="flex items-center gap-2">
+            <MapPin size={16} />
+            {team.hackathonLocation}
+          </p>
 
-        <p className="flex items-center gap-2">
-          <MapPin size={16} />
-          {team.hackathonLocation}
-        </p>
+          <p className="flex items-center gap-2">
+            <CalendarDays size={16} />
+            {new Date(team.hackathonStartDate).toLocaleDateString()} –{" "}
+            {new Date(team.hackathonEndDate).toLocaleDateString()}
+          </p>
+        </div>
 
-        <p className="flex items-center gap-2">
-          <CalendarDays size={16} />
-          {new Date(team.hackathonStartDate).toLocaleDateString()} –{" "}
-          {new Date(team.hackathonEndDate).toLocaleDateString()}
-        </p>
-      </div>
+        {team.description && (
+          <div>
+            <h2 className="text-lg text-blue-500 font-semibold mb-2">
+              About This Team
+            </h2>
+            <p className="text-slate-200">{team.description}</p>
+          </div>
+        )}
 
-    
-      <div>
-        {team.description && <h2 className="text-lg text-blue-500 font-semibold mb-2">
-          About This Team
-        </h2>}
-        <p className="text-slate-200">{team.description}</p>
-      </div>
+        <div>
+          <h2 className="text-lg text-blue-500 font-semibold mb-2">
+            Roles Needed
+          </h2>
+          <div className="flex flex-wrap gap-2">
+            {team.rolesNeeded.map((role, i) => (
+              <span
+                key={i}
+                className="bg-slate-800 text-slate-300 px-3 py-1 rounded-full text-sm"
+              >
+                {role}
+              </span>
+            ))}
+          </div>
+        </div>
 
-     
-      <div>
-        <h2 className="text-lg text-blue-500 font-semibold mb-2">
-          Roles Needed
-        </h2>
-        <div className="flex flex-wrap gap-2">
-          {team.rolesNeeded.map((role, i) => (
-            <span
-              key={i}
-              className="bg-slate-800 text-slate-300 px-3 py-1 rounded-full text-sm"
+        <div>
+          <h2 className="text-lg text-blue-500 font-semibold mb-2 flex items-center gap-2">
+            <Users size={18} />
+            Members ({team.members.length}/{team.membersRequired})
+          </h2>
+
+          <div className="space-y-1 text-slate-300 text-sm">
+            {team.members.map((member) => (
+              <p key={member._id}>{member.fullName}</p>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex gap-4 pt-4 border-t border-slate-700">
+          {!isCreator && (
+            <button
+              onClick={handleJoin}
+              className="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded-lg text-white transition"
             >
-              {role}
+              Join Team
+            </button>
+          )}
+
+          {isCreator && (
+            <>
+              <Button
+                onClick={handleDelete}
+                variant="destructive"
+                className="bg-red-600 hover:bg-red-700 transition"
+              >
+                <MdDelete size={16} />
+                Delete
+              </Button>
+
+              <Link to={`/teams/edit/${team._id}`}>
+                <Button>
+                  <MdEdit size={16} />
+                  Edit
+                </Button>
+              </Link>
+            </>
+          )}
+        </div>
+      </div>
+
+      
+      <div className="flex justify-center md:justify-start">
+        <div className="w-50 h-50 rounded-full border border-slate-600 overflow-hidden bg-slate-800 flex items-center justify-center">
+          {team.avatar ? (
+            <img
+              src={team.avatar}
+              alt="Team Avatar"
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <span className="text-slate-400 text-sm text-center px-3">
+              No Team Avatar
             </span>
-          ))}
+          )}
         </div>
-      </div>
-
-     
-      <div>
-        <h2 className="text-lg text-blue-500 font-semibold mb-2 flex items-center gap-2">
-          <Users size={18} />
-          Members ({team.members.length}/{team.membersRequired})
-        </h2>
-
-        <div className="space-y-1 text-slate-300 text-sm">
-          {team.members.map((member) => (
-            <p key={member._id}>{member.fullName}</p>
-          ))}
-        </div>
-      </div>
-
-     
-      <div className="flex gap-4 pt-4 border-t border-slate-700">
-
-        {!isCreator && (
-          <button
-            onClick={handleJoin}
-            className="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded-lg text-white transition"
-          >
-            Join Team
-          </button>
-        )}
-
-        {isCreator && (
-          <Button
-            onClick={handleDelete}
-            variant='destructive'
-            className=" bg-red-600 hover:bg-red-700 transition"
-          >
-             <MdDelete size={16} />
-            Delete Team
-          </Button>
-        )}
-         {isCreator && (
-          <Link to={`/teams/edit/${team._id}`}>
-          <Button
-            onClick={handleEdit}
-            className=""
-          >
-           <MdEdit size={16}/>
-            Edit Team
-          </Button></Link>
-        )}
       </div>
     </div>
   )
