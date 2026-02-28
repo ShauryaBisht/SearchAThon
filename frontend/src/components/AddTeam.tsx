@@ -17,10 +17,14 @@ type TeamFormValues = {
 
 export default function AddTeam() {
   const { register, handleSubmit, formState: { errors } } = useForm<TeamFormValues>()
-  const [teamAvatar,setTeamAvatar]=useState(null)
+  const [teamAvatar, setTeamAvatar] = useState<string | null>(null)
   const [publicId,setPublicId]=useState<string>("")
   const navigate = useNavigate()
   const onSubmit: SubmitHandler<TeamFormValues> = async (data) => {
+    if (!teamAvatar || !publicId) {
+    alert("Please upload team avatar first");
+    return;
+  }
     const formatted = {
       ...data,
       rolesNeeded: data.rolesNeeded.split(",").map(r => r.trim()),
@@ -96,13 +100,24 @@ export default function AddTeam() {
           <span className="px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-medium text-center hover:bg-indigo-700 transition">
             Upload Team Avatar
           </span>
-
+          {teamAvatar && (
+  <p className="text-green-400 text-sm">
+    ✅ Avatar uploaded successfully
+  </p>
+)}
           <span className="text-xs text-gray-500">
             PNG, JPG up to 6MB
           </span>
         </label>
       </Input>
-      <button className="w-full bg-blue-600 hover:bg-blue-700 py-2 rounded-lg text-white font-semibold">
+      <button
+  disabled={!teamAvatar}
+  className={`w-full py-2 rounded-lg text-white font-semibold
+    ${teamAvatar
+      ? "bg-blue-600 hover:bg-blue-700"
+      : "bg-gray-500 cursor-not-allowed"}
+  `}
+>
         Post Team
       </button>
     </form>

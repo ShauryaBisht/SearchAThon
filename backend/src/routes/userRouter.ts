@@ -7,7 +7,7 @@ const userRouter=Router();
 
 userRouter.put('/profile/edit',verifyJWT,editProfile)
 userRouter.get('/teams',verifyJWT,getTeams)
-userRouter.post('/add-team',verifyJWT,addTeam)
+userRouter.post('/add-team',verifyJWT,upload.single("avatar"),addTeam)
 userRouter.delete('/team/:teamId',verifyJWT,deleteTeam)
 userRouter.get('/team/:teamId',verifyJWT,getTeamById)
 userRouter.put('/team/edit/:teamId',verifyJWT,editTeam)

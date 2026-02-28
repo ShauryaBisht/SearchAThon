@@ -36,6 +36,11 @@ const addTeam=asyncHandler(async(req:Request,res:Response)=>{
     if(!name||!hackathonName||!hackathonLocation||!hackathonStartDate||!hackathonEndDate||!rolesNeeded)
           throw new ApiError(400,"Required Field Not Filled")
     const userId = req.user?._id     
+
+if (!avatar || !avatarPublicId) {
+  throw new ApiError(400, "Avatar is required");
+}
+
     const team = await Team.create({
     name,
     hackathonDescription:description,
@@ -46,8 +51,8 @@ const addTeam=asyncHandler(async(req:Request,res:Response)=>{
     rolesNeeded,
     membersRequired,
     createdBy: userId,
-    avatar,
-  avatarPublicId,
+     avatar,
+    avatarPublicId,
     members: [userId], 
   })
     res.status(201).json(new ApiResponse(200,team,"Team created Successfully"))
