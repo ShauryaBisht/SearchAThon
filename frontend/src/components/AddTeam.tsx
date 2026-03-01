@@ -102,7 +102,7 @@ export default function AddTeam() {
           </span>
           {teamAvatar && (
   <p className="text-green-400 text-sm">
-    ✅ Avatar uploaded successfully
+    Avatar uploaded successfully
   </p>
 )}
           <span className="text-xs text-gray-500">

@@ -3,7 +3,7 @@ import dotenv from "dotenv"
 dotenv.config({ path: "./.env" })
 import cookieParser from "cookie-parser"
 import cors from "cors"
-
+import { connectRedis } from "./config/redis.js"
 import { connectDB } from "./db/db.js"
 import authRouter from "./routes/authRouter.js"
 import userRouter from "./routes/userRouter.js"
@@ -27,7 +27,7 @@ app.use("/api", authRouter)
 app.use("/api",userRouter)
 
 const PORT = Number(process.env.PORT) 
-
+await connectRedis()
 connectDB()
   .then(() => {
     app.listen(PORT, () => {

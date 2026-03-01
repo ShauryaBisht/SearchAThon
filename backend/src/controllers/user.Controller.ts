@@ -7,7 +7,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { Team } from "../models/TeamSchema.js";
 import { uploadOnCloudinary } from "../utils/Cloudinary.js";
 import { v2 as cloudinary } from "cloudinary";
-
+import { redisClient } from "../config/redis.js";
 
 const editProfile=asyncHandler(async(req:Request,res:Response)=>{
    
@@ -24,9 +24,11 @@ const editProfile=asyncHandler(async(req:Request,res:Response)=>{
     if(bio) user.bio=bio
     if(skills) user.skills=skills
     if(linkedin) user.linkedin=linkedin
-     
+      
      await user.save()
     
+      await redisClient.del(`user:profile:${user._id}`)
+
     res.status(200).json(new ApiResponse(200,user,"Profile successfully updated"))
     
 })
