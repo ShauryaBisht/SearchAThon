@@ -4,6 +4,7 @@ import {ApiResponse} from '../utils/ApiResponse.js'
 import {asyncHandler} from '../utils/asyncHandler.js'
 import {Request,Response} from 'express'
 import jwt, { JwtPayload } from 'jsonwebtoken'
+import { redisClient } from "../config/redis.js";
 
 interface DecodedToken extends JwtPayload {
     userId: string;
@@ -120,7 +121,22 @@ const refreshAccessToken = asyncHandler(async (req:Request, res:Response) => {
 
 const getMe=asyncHandler(async(req:Request,res:Response)=>{
     const user=req.user
-    console.log("User found in request:", req.user);
+    console.log("User found in request:", req.user)
+     const cacheKey = `user:profile:${user._id}`
+    const cachedUser = await redisClient.get(cacheKey)
+    if (cachedUser) {
+        console.log("Cache hit")
+        return res.status(200).json(
+            new ApiResponse(200, JSON.parse(cachedUser), "User fetched from cache")
+        )
+    }
+    console.log("Cache miss")
+  await redisClient.set(
+        cacheKey,
+        JSON.stringify(user),
+        { EX: 3600 }
+    )
+
     res.status(200).json(new ApiResponse(200,user,"User found successfully"))
 })
 
