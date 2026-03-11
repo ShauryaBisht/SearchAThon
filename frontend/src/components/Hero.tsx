@@ -23,7 +23,7 @@ function Hero(){
           <p className="text-slate-600 md:text-lg dark:text-slate-300">SearchAThon helps participants find teammates, match skills, and form strong hackathon teams quickly and easily.</p>
         </div>
         <div>
-          <NavLink to={user?"/explore":"/signup"}><Button className="bg-blue-600 px-6 py-3 rounded-xl hover:bg-blue-700 transition">{user?"Explore Teams":"Create an Account"}</Button></NavLink> 
+          <NavLink to={user?"/teams":"/signup"}><Button className="bg-blue-600 px-6 py-3 rounded-xl hover:bg-blue-700 transition">{user?"Explore Teams":"Create an Account"}</Button></NavLink> 
         </div>
       </div>
       <div className="flex justify-evenly md:mt-18 mt-10 flex-col md:flex-row gap-4">

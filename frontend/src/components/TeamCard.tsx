@@ -2,6 +2,7 @@ import { Users } from "lucide-react"
 import { Link } from "react-router-dom"
 import { MdDelete } from "react-icons/md"
 import { useAuth } from "./UserContext"
+
 import axios from "axios"
 type Team = {
   _id:string
@@ -51,7 +52,7 @@ export default function TeamCard({ team }: { team: Team }) {
             className="w-12 h-12 rounded-full object-cover border border-slate-600"
           />
           <div>
-            <h3 className="text-white font-semibold text-lg">{team.createdBy.fullName}</h3>
+           <h3 className="text-white font-semibold text-lg">{team.createdBy.fullName}</h3>
             <p className="text-slate-400 text-sm">{team.createdBy.role}</p>
           </div>
         </div>
