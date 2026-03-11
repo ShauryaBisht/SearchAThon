@@ -61,9 +61,19 @@ if (!avatar || !avatarPublicId) {
 })
 
 const getTeams=asyncHandler(async(req:Request,res:Response)=>{
-    const teams=await Team.find()
+    const cacheKey="teams:feed"
+    const cached=await redisClient.get(cacheKey)
+    if (cached){
+         return res.json(new ApiResponse(200, JSON.parse(cached), "From cache"))
+  }
+
+   const teams=await Team.find()
     .populate("createdBy", "userId fullName role avatar")
     .sort({ createdAt: -1 })
+
+    await redisClient.set(cacheKey, JSON.stringify(teams), {
+      EX:60
+    })
     res.status(200).json(new ApiResponse(200,teams,"Success"))
 })
 
@@ -87,12 +97,20 @@ const deleteTeam=asyncHandler(async(req:Request,res:Response)=>{
 
 const getTeamById=asyncHandler(async(req:Request,res:Response)=>{
    const {teamId}=req.params
+   const cacheKey=`teams:details:${teamId}`
+   const cache= await redisClient.get(cacheKey)
+   if(cache){
+      return res.status(200).json(new ApiResponse(200,JSON.parse(cache),"Success"))
+   }
    const team=await Team.findById(teamId)
    .populate("members", "fullName avatar")
   .populate("createdBy", "fullName avatar role")
    if (!team) {
     throw new ApiError(404, "Team not found")
   }
+  await redisClient.set(cacheKey,JSON.stringify(team),{
+    EX:60
+  })
   res.status(200).json(new ApiResponse(200,team,"Success"))
   })
 
