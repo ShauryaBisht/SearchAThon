@@ -60,6 +60,19 @@ if (!avatar || !avatarPublicId) {
     res.status(201).json(new ApiResponse(200,team,"Team created Successfully"))
 })
 
+const getUserProfile = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params
+
+  const user = await User.findById(id).select("-password")
+
+  if (!user) {
+    throw new ApiError(404, "User not found")
+  }
+
+  res.status(200).json(new ApiResponse(200, user, "Profile fetched"))
+})
+
+
 const getTeams=asyncHandler(async(req:Request,res:Response)=>{
     const cacheKey="teams:feed"
     const cached=await redisClient.get(cacheKey)
@@ -204,4 +217,4 @@ const uploadTeamPic = asyncHandler(
   }
 );
 
-export {editProfile,addTeam,getTeams,deleteTeam,getTeamById,editTeam,uploadProfilePic,deleteProfilePic,uploadTeamPic}
+export {editProfile,addTeam,getTeams,deleteTeam,getTeamById,editTeam,uploadProfilePic,deleteProfilePic,uploadTeamPic,getUserProfile}

@@ -4,33 +4,61 @@ import { Badge } from "./ui/badge";
 import { FaGithub } from "react-icons/fa6";
 import { FaLinkedin } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import axios from "axios";
 
 function Profile() {
-    const { user } = useAuth();
-    const [profilePic, setProfilePic] = useState("/vite.svg");
-    const [publicId, setPublicId] = useState<string | null>(null);
-    const skills = user?.skills ?? [];
+    const { user } = useAuth()
+    const { id } = useParams()
+    const [profilePic, setProfilePic] = useState("/vite.svg")
+    const [publicId, setPublicId] = useState<string | null>(null)
+    const [profile, setProfile] = useState<any>(null);
+    const skills = profile?.skills ?? [];
+    const isOwnProfile = user?._id === profile?._id;
     const uploadPhoto = async (file: File) => {
         const formData = new FormData()
         formData.append("image", file)
 
         const res = await axios.post("http://localhost:8000/api/avatar/upload", formData, { withCredentials: true })
-        setProfilePic(res.data.imageUrl)
+        setProfile((prev: any) => ({
+            ...prev,
+            avatar: res.data.imageUrl
+        }))
         setPublicId(res.data.publicId)
     };
     const deletePhoto = async () => {
-  if (!publicId) return;
+        if (!publicId) return;
 
-  await axios.delete("http://localhost:8000/api/avatar/delete", {
-    data: { publicId },
-    withCredentials: true
-  });
+        await axios.delete("http://localhost:8000/api/avatar/delete", {
+            data: { publicId },
+            withCredentials: true
+        });
 
-  setProfilePic("/vite.svg");
-  setPublicId(null);
-};
+        setProfile((prev: any) => ({
+            ...prev,
+            avatar: null
+        }))
+        setPublicId(null);
+    };
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                const res = await axios.get(
+                    `http://localhost:8000/api/profile/${id}`,
+                    { withCredentials: true }
+                );
+
+                setProfile(res.data.data);
+            } catch (err) {
+                console.error("Failed to fetch profile", err)
+            }
+        }
+
+        if (id) fetchProfile()
+    }, [id])
+
+
     return (
         <>
             <div id="container" className="flex flex-col h-full w-full">
@@ -41,20 +69,23 @@ function Profile() {
                     <div className="flex gap-5">
                         <div className="flex items-center gap-3">
                             <div className="w-20 h-20 overflow-hidden rounded-full bg-white border-2 border-slate-400">
-                                <img src={profilePic} className="w-full h-full object-cover" />
+                                <img
+                                    src={profile?.avatar || "/vite.svg"}
+                                    className="w-full h-full object-cover"
+                                />
                             </div>
                             <div className="flex flex-col gap-0.5">
-                                <h1 className="text-blue-600 font-semibold">{user?.fullName}</h1>
-                                <h2 className="text-blue-600 font-medium">{user?.role}</h2>
-                                <h3 className="text-green-600 font-light text-s">{user?.experienceLevel}</h3>
+                                <h1 className="text-blue-600 font-semibold">{profile?.fullName}</h1>
+                                <h2 className="text-blue-600 font-medium">{profile?.role}</h2>
+                                <h3 className="text-green-600 font-light text-s">{profile?.experienceLevel}</h3>
                                 <div className="flex gap-3 mt-2">
-                                    <a href={user?.github}><FaGithub className="w-5 h-5 text-slate-400 hover:text-white cursor-pointer transition" /></a>
-                                    <a href={user?.linkedin}><FaLinkedin className="w-5 h-5 text-slate-400 hover:text-blue-400 cursor-pointer transition" /></a>
+                                    <a href={profile?.github}><FaGithub className="w-5 h-5 text-slate-400 hover:text-white cursor-pointer transition" /></a>
+                                    <a href={profile?.linkedin}><FaLinkedin className="w-5 h-5 text-slate-400 hover:text-blue-400 cursor-pointer transition" /></a>
                                 </div>
                             </div>
                         </div>
                         <div className="flex flex-wrap gap-2 items-center">
-                            {skills.slice(0, 5).map((skill, index) => (
+                            {skills.slice(0, 5).map((skill: any, index: any) => (
                                 <Badge
                                     key={index}
                                     className="bg-blue-600/10 text-blue-400 border border-blue-500/20"
@@ -83,14 +114,22 @@ function Profile() {
                             }}
                         />
 
-                        <Button
-                            variant="default"
-                            onClick={() => document.getElementById("profileUpload")?.click()}
-                        >
-                            Upload Photo
-                        </Button>
-                        <Button variant='destructive' onClick={deletePhoto}>Delete Photo</Button>
-                        <NavLink to={`/profile/edit/${user?._id}`}><Button className="secondary">✏️ Edit Profile</Button></NavLink>
+                        {isOwnProfile && (
+                            <>
+                                <Button onClick={() => document.getElementById("profileUpload")?.click()}>
+                                    Upload Photo
+                                </Button>
+
+                                <Button variant="destructive" onClick={deletePhoto}>
+                                    Delete Photo
+                                </Button>
+                            </>
+                        )}
+                        {isOwnProfile && (
+                            <NavLink to={`/profile/edit/${user?._id}`}>
+                                <Button>✏️ Edit Profile</Button>
+                            </NavLink>
+                        )}
                     </div>
                 </div>
 
@@ -100,13 +139,13 @@ function Profile() {
 
                     <h2 className="text-blue-500 text-lg font-semibold text-center mb-4">Bio</h2>
                     <p className="text-slate-300 text-center leading-relaxed max-w-2xl mx-auto">
-                        {user?.bio}
+                        {profile?.bio}
                     </p>
 
 
                     <h3 className="text-blue-500 text-lg font-semibold text-center mt-8">Skills</h3>
                     <div className="flex flex-wrap justify-center gap-3 mt-4">
-                        {user?.skills?.map((skill, index) => (
+                        {profile?.skills?.map((skill: any, index: any) => (
                             <Badge
                                 key={index}
                             >
@@ -118,21 +157,21 @@ function Profile() {
                     <div className="grid md:grid-cols-2 gap-6 text-slate-300">
                         <div>
                             <p className="text-slate-400 text-sm">Role</p>
-                            <p className="font-medium text-white">{user?.role}</p>
+                            <p className="font-medium text-white">{profile?.role}</p>
                         </div>
 
                         <div>
                             <p className="text-slate-400 text-sm">Experience Level</p>
-                            <p className="font-medium text-white">{user?.experienceLevel}</p>
+                            <p className="font-medium text-white">{profile?.experienceLevel}</p>
                         </div>
 
                         <div>
                             <p className="text-slate-400 text-sm">Preferred Role in a Team</p>
-                            <p className="font-medium text-white">{user?.preferredRole}</p>
+                            <p className="font-medium text-white">{profile?.preferredRole}</p>
                         </div>
                         <div>
                             <p className="text-slate-400 text-sm">Based In</p>
-                            <p className="font-medium text-white">{user?.location}</p>
+                            <p className="font-medium text-white">{profile?.location}</p>
                         </div>
                     </div>
                 </div>

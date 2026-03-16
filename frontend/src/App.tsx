@@ -33,7 +33,8 @@ function App() {
      <Route path='/signup' element={<Signup />} />
 
       <Route path="/teams" element={ <ProtectedRoute><Teams /></ProtectedRoute>}></Route>
-      <Route path="/profile/:id" element={ <ProtectedRoute><Profile /></ProtectedRoute>}></Route>
+     <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+<Route path="/profile/:id" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
       <Route path="/profile/edit/:id" element={ <ProtectedRoute><ProfileForm /></ProtectedRoute>}></Route>
       <Route path='/add-team' element={<ProtectedRoute><AddTeam /></ProtectedRoute>}></Route>
       <Route path='/teams/:id' element={<ProtectedRoute><TeamDetails /></ProtectedRoute>} />
