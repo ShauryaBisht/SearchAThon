@@ -38,11 +38,11 @@ const addTeam=asyncHandler(async(req:Request,res:Response)=>{
     if(!name||!hackathonName||!hackathonLocation||!hackathonStartDate||!hackathonEndDate||!rolesNeeded)
           throw new ApiError(400,"Required Field Not Filled")
     const userId = req.user?._id     
-
+  
 if (!avatar || !avatarPublicId) {
   throw new ApiError(400, "Avatar is required");
 }
-
+  await redisClient.del("teams:feed")
     const team = await Team.create({
     name,
     hackathonDescription:description,
@@ -74,13 +74,30 @@ const getUserProfile = asyncHandler(async (req: Request, res: Response) => {
 
 
 const getTeams=asyncHandler(async(req:Request,res:Response)=>{
-    const cacheKey="teams:feed"
+
+  const search=(req.query.search as string)??""
+
+   const cacheKey = search
+    ? `teams:search:${search}`
+    : "teams:feed"
+
+  
     const cached=await redisClient.get(cacheKey)
     if (cached){
          return res.json(new ApiResponse(200, JSON.parse(cached), "From cache"))
   }
+ let query:any={}
 
-   const teams=await Team.find()
+  if(search && search.trim() !== ""){
+    query.$or=[
+      {name:{$regex:search,$options:"i"}},
+      {hackathonName:{$regex:search,$options:"i"}},
+      {hackathonLocation:{$regex:search,$options:"i"}},
+      {rolesNeeded:{$regex:search,$options:"i"}}
+    ]
+  }
+
+   const teams=await Team.find(query)
     .populate("createdBy", "userId fullName role avatar")
     .sort({ createdAt: -1 })
 

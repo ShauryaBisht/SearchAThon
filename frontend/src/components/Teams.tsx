@@ -4,16 +4,18 @@ import { Button } from "./ui/button"
 import axios from "axios"
 import { Input } from "./ui/input"
 import { NavLink } from "react-router-dom"
+
 function Teams() {
   const [teams, setTeams] = useState<any[]>([])
-
+  const [search, setSearch] = useState("")
   useEffect(() => {
     const fetchTeams = async () => {
       try {
         const res = await axios.get(
-          "http://localhost:8000/api/teams",
-          { withCredentials: true }
-        )
+          "http://localhost:8000/api/teams",{
+          params:search?{search}:{},
+          withCredentials: true }
+      )
         setTeams(res.data.data)
       } catch (err) {
         console.log(err)
@@ -21,7 +23,7 @@ function Teams() {
     }
 
     fetchTeams()
-  }, [teams])
+  }, [search])
 
   return (
     <main>
@@ -30,7 +32,7 @@ function Teams() {
       </h1>
 
       <div className="flex justify-center mt-[2%] gap-4">
-        <Input placeholder="Search a Team" className="max-w-xs" />
+        <Input placeholder="Search a Team" className="max-w-xs" value={search} onChange={(e)=>setSearch(e.target.value)}/>
         <NavLink to="/add-team">
           <Button>Add Team +</Button>
         </NavLink>
