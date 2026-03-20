@@ -30,21 +30,22 @@ const teamSchema = new mongoose.Schema<Team>({
       ref: "User"
    },
    avatar: {
-      required: true,
+      required: false,
       type: String
    },
    avatarPublicId: {
       type: String,
       default: ""
    },
-   members: [{
-      type: mongoose.Schema.Types.ObjectId,
+   members: {
+      type: [mongoose.Schema.Types.ObjectId],
       ref: "User",
       default: []
-   }],
+   },
    membersRequired: {
       required: true,
-      type: Number
+      type: Number,
+      min:1
    },
    description: {
       required: false,
@@ -74,12 +75,12 @@ const teamSchema = new mongoose.Schema<Team>({
       required: true,
       type: String
    }],
-   joinRequests: [{
+   joinRequests: {
       required: false,
-      type: mongoose.Schema.Types.ObjectId,
+      type: [mongoose.Schema.Types.ObjectId],
       ref: "User",
       default: []
-   }]
+   }
 }, { timestamps: true })
 
 export const Team = mongoose.model<Team>("Team", teamSchema)

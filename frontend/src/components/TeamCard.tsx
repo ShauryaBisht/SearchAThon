@@ -12,7 +12,9 @@ type Team = {
   hackathonLocation: string
   hackathonStartDate: string
   hackathonEndDate: string
+  members:string[]
   membersRequired: number
+  joinRequests:string[]
   rolesNeeded: string[]
   avatar:string,
   publicId:string
@@ -111,10 +113,32 @@ const handleJoin=async()=>{
           Delete Team
         </button>
         
-        {team.createdBy._id!==user?._id &&<button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition" onClick={handleJoin}>
-          Join Request
-        </button>}
-
+        {team.createdBy._id !== user?._id && (
+  team.members.some((mem: any) =>
+    mem._id?.toString() === user?._id?.toString()
+  ) ? (
+    <button disabled className="bg-green-600 text-white py-2 px-4 rounded-lg opacity-70">
+      Joined
+    </button>
+  ) : team.joinRequests.some((rq: any) =>
+    rq._id?.toString() === user?._id?.toString()
+  ) ? (
+    <button disabled className="bg-yellow-600 text-white py-2 px-4 rounded-lg opacity-70">
+      Requested
+    </button>
+  ) : team.members.length >= team.membersRequired ? (
+    <button disabled className="bg-gray-600 text-white py-2 px-4 rounded-lg opacity-70">
+      Team Full
+    </button>
+  ) : (
+    <button
+      className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition"
+      onClick={handleJoin}
+    >
+      Join Request
+    </button>
+  )
+)}
       </div>
 
     </div>

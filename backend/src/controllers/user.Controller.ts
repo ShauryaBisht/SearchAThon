@@ -98,7 +98,9 @@ const getTeams=asyncHandler(async(req:Request,res:Response)=>{
   }
 
    const teams=await Team.find(query)
-    .populate("createdBy", "userId fullName role avatar")
+    .populate("createdBy", "fullName role avatar")
+    .populate("members", "_id fullName")
+    .populate("joinRequests", "_id fullName")
     .sort({ createdAt: -1 })
 
     await redisClient.set(cacheKey, JSON.stringify(teams), {
@@ -135,6 +137,7 @@ const getTeamById=asyncHandler(async(req:Request,res:Response)=>{
    const team=await Team.findById(teamId)
    .populate("members", "fullName avatar")
   .populate("createdBy", "fullName avatar role")
+  .populate("joinRequests", "fullName avatar")
    if (!team) {
     throw new ApiError(404, "Team not found")
   }
