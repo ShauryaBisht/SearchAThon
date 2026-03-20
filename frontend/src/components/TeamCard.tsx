@@ -40,6 +40,14 @@ export default function TeamCard({ team }: { team: Team }) {
     console.error("Failed to delete team", err)
   }
 }
+const handleJoin=async()=>{
+  try{
+    await axios.post(`http://localhost:8000/api/join/${team._id}`,{},{withCredentials:true})
+  }
+  catch(err){
+    console.log("Request unsuccessful")
+  }
+}
 
   return (
     <div className="w-full max-w-2xl mx-auto bg-slate-900/60 border border-slate-700 rounded-xl p-5 backdrop-blur space-y-4 shadow-md mt-6">
@@ -103,9 +111,9 @@ export default function TeamCard({ team }: { team: Team }) {
           Delete Team
         </button>
         
-        <button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition">
+        {team.createdBy._id!==user?._id &&<button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition" onClick={handleJoin}>
           Join Request
-        </button>
+        </button>}
 
       </div>
 

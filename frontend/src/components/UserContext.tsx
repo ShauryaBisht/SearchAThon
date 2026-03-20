@@ -35,9 +35,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       })
       setUser(res.data.data)
     } catch (err: any) {
-  if (err.response?.status !== 401) {
-    console.error(err)
-  }
   setUser(null)
  } finally {
       setLoading(false)

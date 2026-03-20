@@ -234,4 +234,36 @@ const uploadTeamPic = asyncHandler(
   }
 );
 
-export {editProfile,addTeam,getTeams,deleteTeam,getTeamById,editTeam,uploadProfilePic,deleteProfilePic,uploadTeamPic,getUserProfile}
+const joinTeam = asyncHandler(async (req: Request, res: Response) => {
+  const { teamId } = req.params
+  const userId = req.user?._id
+
+  if (!userId) {
+    throw new ApiError(401, "Unauthorized")
+  }
+
+  const team = await Team.findById(teamId)
+
+  if (!team) {
+    throw new ApiError(404, "Team not found")
+  }
+
+  if (team.members.length >= team.membersRequired) {
+    throw new ApiError(400, "Team already full")
+  }
+
+  if (team.members.some(id => id.toString() === userId.toString())) {
+    throw new ApiError(400, "Already a member")
+  }
+
+  if (team.joinRequests.some(id => id.toString() === userId.toString())) {
+    throw new ApiError(400, "Already requested")
+  }
+
+  team.joinRequests.push(userId)
+  await team.save()
+
+  res.status(200).json(new ApiResponse(200, null, "Request sent"))
+})
+
+export {editProfile,addTeam,getTeams,deleteTeam,getTeamById,editTeam,uploadProfilePic,deleteProfilePic,uploadTeamPic,getUserProfile,joinTeam}
