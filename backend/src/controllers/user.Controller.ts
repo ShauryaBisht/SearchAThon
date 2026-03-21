@@ -268,5 +268,27 @@ const joinTeam = asyncHandler(async (req: Request, res: Response) => {
 
   res.status(200).json(new ApiResponse(200, null, "Request sent"))
 })
+const acceptReq=asyncHandler(async(req:Request,res:Response)=>{
+   const {teamId}=req.params
+   const {userId}=req.params
+   const currentUserId = req.user?._id
+   const user=await User.findById(userId)
+   if(!user)  throw new ApiError(400,"User does not exist")
+    const team=await Team.findById(teamId)
+  if(!team) throw new ApiError(400,"Team does not exist")
+  if (team.createdBy.toString() !== currentUserId?.toString())
+     throw new ApiError(403,"Not authorized for this")
+  if(team?.members.length==team?.membersRequired)
+    throw new ApiError(400,"Team full")
+  team.joinRequests = team.joinRequests.filter(
+  (id) => id.toString() !== userId.toString()
+)
+      team.members.push(user._id)
 
-export {editProfile,addTeam,getTeams,deleteTeam,getTeamById,editTeam,uploadProfilePic,deleteProfilePic,uploadTeamPic,getUserProfile,joinTeam}
+      await team.save()
+
+res.status(200).json(new ApiResponse(200, null, "User added to team"))
+})
+export {editProfile,addTeam,getTeams,deleteTeam,getTeamById,editTeam,uploadProfilePic,deleteProfilePic,uploadTeamPic,getUserProfile,joinTeam
+  ,acceptReq
+}

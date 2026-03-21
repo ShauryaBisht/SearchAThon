@@ -70,7 +70,15 @@ export default function TeamDetails() {
       console.error(err)
     }
   }
-
+  const handleAccept=async(userId:string)=>{
+      try{
+        await axios.post(`http://localhost:8000/api/join/accept/${team?._id}/${userId}`,{},{withCredentials:true})
+         alert("User added to team")
+      }
+      catch(err){
+        console.log(err)
+      }
+  }
   const handleDelete = async () => {
     try {
       await axios.delete(
@@ -173,13 +181,14 @@ export default function TeamDetails() {
                   src={reqUser.avatar}
                   className="w-full h-full object-cover"
                 />
-              ) : null}
+              ) : (<img src="/nopic.jpg" className="w-full h-full object-cover"/>)}
             </div>
             <p className="text-slate-200">{reqUser.fullName}</p>
           </div>
           <div className="flex gap-2">
             <button
               className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-md text-sm"
+              onClick={() => handleAccept(reqUser._id)}
             >
               Accept
             </button>

@@ -45,6 +45,7 @@ export default function TeamCard({ team }: { team: Team }) {
 const handleJoin=async()=>{
   try{
     await axios.post(`http://localhost:8000/api/join/${team._id}`,{},{withCredentials:true})
+    alert("Request Sent")
   }
   catch(err){
     console.log("Request unsuccessful")
