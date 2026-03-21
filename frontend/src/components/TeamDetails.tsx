@@ -25,6 +25,11 @@ type Team = {
     _id: string
     fullName: string
   }
+  joinRequests: {
+  _id: string
+  fullName: string
+  avatar?: string
+}[]
 }
 
 export default function TeamDetails() {
@@ -150,6 +155,46 @@ export default function TeamDetails() {
             ))}
           </div>
         </div>
+        {isCreator && team.joinRequests && team.joinRequests.length > 0 && (
+  <div>
+    <h2 className="text-lg text-blue-500 font-semibold mb-3">
+      Join Requests
+    </h2>
+    <div className="space-y-3">
+      {team.joinRequests.map((reqUser) => (
+        <div
+          key={reqUser._id}
+          className="flex items-center justify-between bg-slate-800 px-4 py-2 rounded-lg"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full overflow-hidden bg-slate-700">
+              {reqUser.avatar ? (
+                <img
+                  src={reqUser.avatar}
+                  className="w-full h-full object-cover"
+                />
+              ) : null}
+            </div>
+            <p className="text-slate-200">{reqUser.fullName}</p>
+          </div>
+          <div className="flex gap-2">
+            <button
+              className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-md text-sm"
+            >
+              Accept
+            </button>
+
+            <button
+              className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-md text-sm"
+            >
+              Reject
+            </button>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+)}
 
         <div className="flex gap-4 pt-4 border-t border-slate-700">
           {!isCreator && (
