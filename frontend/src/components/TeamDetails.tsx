@@ -58,22 +58,24 @@ export default function TeamDetails() {
     fetchTeam()
   }, [id])
 
-  const handleJoin = async () => {
-    try {
-      await axios.post(
-        `http://localhost:8000/api/team/join/${id}`,
-        {},
-        { withCredentials: true }
-      )
-      alert("Join request sent")
-    } catch (err) {
-      console.error(err)
-    }
-  }
   const handleAccept = async (userId: string) => {
   try {
     await axios.post(
       `http://localhost:8000/api/join/accept/${team?._id}/${userId}`,
+      {},
+      { withCredentials: true }
+    )
+
+    await fetchTeam() 
+
+  } catch (err) {
+    console.log(err)
+  }
+}
+const handleReject = async (userId: string) => {
+  try {
+    await axios.post(
+      `http://localhost:8000/api/join/reject/${team?._id}/${userId}`,
       {},
       { withCredentials: true }
     )
@@ -187,6 +189,9 @@ export default function TeamDetails() {
                 />
               ) : (<img src="/nopic.jpg" className="w-full h-full object-cover"/>)}
             </div>
+            {isCreator && team.joinRequests.length === 0 && (
+  <p className="text-slate-400 text-sm">No pending requests</p>
+)}
             <p className="text-slate-200">{reqUser.fullName}</p>
           </div>
           <div className="flex gap-2">
@@ -199,6 +204,7 @@ export default function TeamDetails() {
 
             <button
               className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-md text-sm"
+              onClick={()=>handleReject(reqUser._id)}
             >
               Reject
             </button>
@@ -210,14 +216,6 @@ export default function TeamDetails() {
 )}
 
         <div className="flex gap-4 pt-4 border-t border-slate-700">
-          {!isCreator && (
-            <button
-              onClick={handleJoin}
-              className="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded-lg text-white transition"
-            >
-              Join Team
-            </button>
-          )}
 
           {isCreator && (
             <>

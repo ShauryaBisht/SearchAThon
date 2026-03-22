@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { verifyJWT } from '../middleware/authmiddleware.js';
-import { acceptReq, addTeam, deleteProfilePic, deleteTeam, editProfile, editTeam, getTeamById, getTeams, getUserProfile, joinTeam, uploadProfilePic, uploadTeamPic } from '../controllers/user.Controller.js';
+import { acceptReq, addTeam, deleteProfilePic, deleteTeam, editProfile, editTeam, getTeamById, getTeams, getUserProfile, joinTeam, rejectReq, uploadProfilePic, uploadTeamPic } from '../controllers/user.Controller.js';
 import { upload } from '../middleware/multer.js';
 
 const userRouter=Router();
@@ -17,4 +17,5 @@ userRouter.delete('/avatar/delete',deleteProfilePic)
 userRouter.post('/team/avatar/upload',upload.single("image"),uploadTeamPic)
 userRouter.post('/join/:teamId',verifyJWT,joinTeam)
 userRouter.post('/join/accept/:teamId/:userId',verifyJWT,acceptReq)
+userRouter.post('/join/reject/:teamId/:userId',verifyJWT,rejectReq)
 export default userRouter
