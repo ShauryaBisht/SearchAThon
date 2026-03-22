@@ -40,8 +40,7 @@ export default function TeamDetails() {
   const [team, setTeam] = useState<Team | null>(null)
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    const fetchTeam = async () => {
+ const fetchTeam = async () => {
       try {
         const res = await axios.get(
           `http://localhost:8000/api/team/${id}`,
@@ -55,6 +54,7 @@ export default function TeamDetails() {
       }
     }
 
+  useEffect(()=>{
     fetchTeam()
   }, [id])
 
@@ -70,15 +70,20 @@ export default function TeamDetails() {
       console.error(err)
     }
   }
-  const handleAccept=async(userId:string)=>{
-      try{
-        await axios.post(`http://localhost:8000/api/join/accept/${team?._id}/${userId}`,{},{withCredentials:true})
-         alert("User added to team")
-      }
-      catch(err){
-        console.log(err)
-      }
+  const handleAccept = async (userId: string) => {
+  try {
+    await axios.post(
+      `http://localhost:8000/api/join/accept/${team?._id}/${userId}`,
+      {},
+      { withCredentials: true }
+    )
+
+    await fetchTeam() 
+
+  } catch (err) {
+    console.log(err)
   }
+}
   const handleDelete = async () => {
     try {
       await axios.delete(
@@ -99,7 +104,6 @@ export default function TeamDetails() {
   return (
     <div className="max-w-4xl mx-auto mt-10 bg-slate-900/60 border border-slate-700 rounded-2xl p-8 backdrop-blur flex flex-col md:flex-row gap-10">
       
-      {/* LEFT CONTENT */}
       <div className="flex-1 space-y-6">
         <div>
           <h1 className="text-3xl font-bold text-white">{team.name}</h1>
