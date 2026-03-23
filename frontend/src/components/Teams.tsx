@@ -8,8 +8,7 @@ import { NavLink } from "react-router-dom"
 function Teams() {
   const [teams, setTeams] = useState<any[]>([])
   const [search, setSearch] = useState("")
-  useEffect(() => {
-    const fetchTeams = async () => {
+  const fetchTeams = async () => {
       try {
         const res = await axios.get(
           "http://localhost:8000/api/teams",{
@@ -21,7 +20,7 @@ function Teams() {
         console.log(err)
       }
     }
-
+  useEffect(() => {
     fetchTeams()
   }, [search])
 
@@ -40,7 +39,7 @@ function Teams() {
 
       <div className="space-y-6 mt-6">
         {teams.map((team) => (
-          <TeamCard key={team._id} team={team} />
+          <TeamCard key={team._id} team={team} refreshTeams={fetchTeams()}/>
         ))}
       </div>
     </main>

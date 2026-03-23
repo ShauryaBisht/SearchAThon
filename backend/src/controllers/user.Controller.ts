@@ -310,6 +310,18 @@ await redisClient.del("teams:feed")
 res.status(200).json(new ApiResponse(200, null, "Request Rejected"))
 })
 
+const cancelReq=asyncHandler(async(req:Request,res:Response)=>{
+    const {teamId}=req.params
+     const currentUserId=req.user?._id
+    const team=await Team.findById(teamId)
+    if(!team) throw new ApiError(400,"Team does not exist")
+    team.joinRequests=team.joinRequests.filter((re)=>re._id.toString()!==currentUserId.toString())
+    await team.save()
+    await redisClient.del(`teams:details:${teamId}`)
+    await redisClient.del("teams:feed")
+    res.status(200).json(new ApiResponse(200,"Request successfully cancelled"))
+})
+
 export {editProfile,addTeam,getTeams,deleteTeam,getTeamById,editTeam,uploadProfilePic,deleteProfilePic,uploadTeamPic,getUserProfile,joinTeam
-  ,acceptReq,rejectReq
+  ,acceptReq,rejectReq,cancelReq
 }

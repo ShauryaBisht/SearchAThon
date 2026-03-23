@@ -26,12 +26,9 @@ type Team = {
   }
 }
 
-export default function TeamCard({ team }: { team: Team }) {
+export default function TeamCard({ team ,refreshTeams}: { team: Team ,refreshTeams:any}) {
   const {user}=useAuth()
-
   const handleDelete = async () => {
-  
-
   try {
     await axios.delete(
       `http://localhost:8000/api/team/${team._id}`,
@@ -46,9 +43,19 @@ const handleJoin=async()=>{
   try{
     await axios.post(`http://localhost:8000/api/join/${team._id}`,{},{withCredentials:true})
     alert("Request Sent")
+    
   }
   catch(err){
     console.log("Request unsuccessful")
+  }
+}
+const handleCancel=async()=>{
+  try{
+  await axios.post(`http://localhost:8000/api/join/cancel/${team._id}`,{},{withCredentials:true})
+  alert("Request Cancelled")
+  }
+  catch(err){
+    console.log(err)
   }
 }
 
@@ -124,9 +131,12 @@ const handleJoin=async()=>{
   ) : team.joinRequests.some((rq: any) =>
     rq._id?.toString() === user?._id?.toString()
   ) ? (
-    <button disabled className="bg-yellow-600 text-white py-2 px-4 rounded-lg opacity-70">
-      Requested
-    </button>
+    <button
+
+  className="bg-yellow-600 hover:bg-yellow-700 text-white py-2 px-4 rounded-lg transition" onClick={handleCancel}
+>
+  Cancel Request
+</button>
   ) : team.members.length >= team.membersRequired ? (
     <button disabled className="bg-gray-600 text-white py-2 px-4 rounded-lg opacity-70">
       Team Full
