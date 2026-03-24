@@ -14,6 +14,7 @@ import Teams from './components/Teams'
 import TeamDetails from './components/TeamDetails'
 import AddTeam from './components/AddTeam'
 import EditTeam from './components/EditTeam'
+import MyTeams from './components/MyTeams'
 function App() {
   const { loading } = useAuth();
 
@@ -39,7 +40,7 @@ function App() {
       <Route path='/add-team' element={<ProtectedRoute><AddTeam /></ProtectedRoute>}></Route>
       <Route path='/teams/:id' element={<ProtectedRoute><TeamDetails /></ProtectedRoute>} />
       <Route path='/teams/edit/:teamId' element={<ProtectedRoute><EditTeam></EditTeam></ProtectedRoute>}></Route>
-
+      <Route path='/my-teams' element={<ProtectedRoute><MyTeams/></ProtectedRoute>} ></Route>
      </Routes>
      <Footer />
      </motion.div>
