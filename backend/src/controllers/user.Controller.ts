@@ -321,7 +321,16 @@ const cancelReq=asyncHandler(async(req:Request,res:Response)=>{
     await redisClient.del("teams:feed")
     res.status(200).json(new ApiResponse(200,"Request successfully cancelled"))
 })
+const myTeams=asyncHandler(async(req:Request,res:Response)=>{
+   const userId=req.user._id
+   const user=await User.findById(userId)
+   if(!user) throw new ApiError(400,"User does not exist")
+   const createdTeams=await Team.find({createdBy:userId})
+   const joinedTeams=await Team.find({members:userId})
+   const requestedTeams=await Team.find({joinRequests:userId})
+   res.status(200).json(new ApiResponse(200,{createdTeams,joinedTeams,requestedTeams},"Successful"))
+})
 
 export {editProfile,addTeam,getTeams,deleteTeam,getTeamById,editTeam,uploadProfilePic,deleteProfilePic,uploadTeamPic,getUserProfile,joinTeam
-  ,acceptReq,rejectReq,cancelReq
+  ,acceptReq,rejectReq,cancelReq,myTeams
 }
