@@ -4,6 +4,7 @@ import { MdDelete } from "react-icons/md"
 import { useAuth } from "./UserContext"
 
 import axios from "axios"
+
 type Team = {
   _id:string
   name: string
@@ -14,7 +15,7 @@ type Team = {
   hackathonEndDate: string
   members:string[]
   membersRequired: number
-  joinRequests:string[]
+  joinRequests:Array<string | {_id:string,fullName:string}>
   rolesNeeded: string[]
   avatar:string,
   publicId:string
@@ -25,15 +26,25 @@ type Team = {
     role?: string
   }
 }
+type TeamCardProps = {
+  team: Team
+  refreshTeams: () => Promise<void>
+}
 
-export default function TeamCard({ team ,refreshTeams}: { team: Team ,refreshTeams:any}) {
+export default function TeamCard({ team ,refreshTeams}: TeamCardProps) {
   const {user}=useAuth()
   const userId=user?._id.toString()
   const isCreator =
   team.createdBy._id.toString() === user?._id?.toString()
 
 const isMember = userId ? team.members.includes(userId) : false
-const hasRequested = userId ? team.joinRequests.includes(userId) : false
+const hasRequested = userId 
+  ? team.joinRequests.some(req => {
+      const requesterId = typeof req === 'string' ? req : req._id
+      return requesterId.toString() === userId
+    }) 
+  : false
+  
 const isFull = team.members.length >= team.membersRequired
   const handleDelete = async () => {
   try {
@@ -41,6 +52,8 @@ const isFull = team.members.length >= team.membersRequired
       `http://localhost:8000/api/team/${team._id}`,
       { withCredentials: true }
     )
+    alert("Team deleted successfully")
+    await refreshTeams()
    
   } catch (err) {
     console.error("Failed to delete team", err)

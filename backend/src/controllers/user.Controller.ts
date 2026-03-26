@@ -77,15 +77,15 @@ const getTeams=asyncHandler(async(req:Request,res:Response)=>{
 
   const search=(req.query.search as string)??""
 
-   const cacheKey = search
-    ? `teams:search:${search}`
-    : "teams:feed"
+   const cacheKey ="teams:feed"
 
   
-    const cached=await redisClient.get(cacheKey)
+    if (!search) {
+    const cached = await redisClient.get(cacheKey);
     if (cached){
          return res.json(new ApiResponse(200, JSON.parse(cached), "From cache"))
-  }
+  }}
+
  let query:any={}
 
   if(search && search.trim() !== ""){
@@ -102,10 +102,11 @@ const getTeams=asyncHandler(async(req:Request,res:Response)=>{
     .populate("members", "_id fullName")
     .populate("joinRequests", "_id fullName")
     .sort({ createdAt: -1 })
-
+   if(!search){
     await redisClient.set(cacheKey, JSON.stringify(teams), {
       EX:60
     })
+  }
     res.status(200).json(new ApiResponse(200,teams,"Success"))
 })
 
@@ -269,6 +270,7 @@ const joinTeam = asyncHandler(async (req: Request, res: Response) => {
 await redisClient.del("teams:feed")
   res.status(200).json(new ApiResponse(200, null, "Request sent"))
 })
+
 const acceptReq=asyncHandler(async(req:Request,res:Response)=>{
    const {teamId}=req.params
    const {userId}=req.params

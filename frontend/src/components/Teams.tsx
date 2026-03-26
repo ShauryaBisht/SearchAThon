@@ -39,7 +39,7 @@ function Teams() {
 
       <div className="space-y-6 mt-6">
         {teams.map((team) => (
-          <TeamCard key={team._id} team={team} refreshTeams={fetchTeams()}/>
+          <TeamCard key={team._id} team={team} refreshTeams={fetchTeams}/>
         ))}
       </div>
     </main>
