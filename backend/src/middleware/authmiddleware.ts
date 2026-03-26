@@ -1,42 +1,42 @@
+import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import { ApiError } from "../utils/ApiError.js";
 import { User } from "../models/UserSchema.js";
-import { NextFunction, Request,Response } from "express";
-import { JwtPayload } from "jsonwebtoken";
+import { ApiError } from "../utils/ApiError.js";
 
-interface DecodedToken extends JwtPayload {
-    userId: string;
-    email: string;
-}
-
-declare module "express-serve-static-core" {
-  interface Request {
-    user?: any;
-  }
-}
-export const verifyJWT = async (req:Request, res:Response, next:NextFunction) => {
-  try {
-    const token = req.cookies?.accessToken;
-
-    if (!token) {
-      throw new ApiError(401, "Unauthorized request");
+declare global {
+  namespace Express {
+    interface Request {
+      user?: any; 
     }
-
-    const decoded = jwt.verify(
-      token,
-      process.env.ACCESS_TOKEN_SECRET as string
-    )as DecodedToken
-    const user = await User.findById(decoded.userId).select("-password");
-    if (!user) {
-  throw new ApiError(401, "User not found");
-}
-       req.user = user;
-    
-    console.log("Cookies:", req.cookies);
-
-    next();
-  } catch (error:any) {
-    console.log("Error",error.message)
-    throw new ApiError(401, "Invalid Access Token");
   }
+}
+
+interface JwtPayload {
+    userId: string;
+}
+
+export const verifyJWT = async ( req: Request, res: Response, next: NextFunction
+) => {
+    try {
+        const token = req.cookies?.accessToken
+
+        if (!token) {
+            return next(new ApiError(401, "No token provided. Please log in."));
+        }
+        const decoded = jwt.verify(
+            token, 
+            process.env.ACCESS_TOKEN_SECRET as string
+        ) as JwtPayload;
+        const user = await User.findById(decoded.userId).select("-password");
+
+        if (!user) {
+            return next(new ApiError(401, "User no longer exists."));
+        }
+        req.user = user;
+        next();
+
+    } catch (error: any) {
+        console.error("Auth Error:", error.message);
+        return next(new ApiError(401, "Session expired or invalid token."));
+    }
 };
