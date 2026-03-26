@@ -28,6 +28,13 @@ type Team = {
 
 export default function TeamCard({ team ,refreshTeams}: { team: Team ,refreshTeams:any}) {
   const {user}=useAuth()
+  const userId=user?._id.toString()
+  const isCreator =
+  team.createdBy._id.toString() === user?._id?.toString()
+
+const isMember = userId ? team.members.includes(userId) : false
+const hasRequested = userId ? team.joinRequests.includes(userId) : false
+const isFull = team.members.length >= team.membersRequired
   const handleDelete = async () => {
   try {
     await axios.delete(
@@ -43,7 +50,7 @@ const handleJoin=async()=>{
   try{
     await axios.post(`http://localhost:8000/api/join/${team._id}`,{},{withCredentials:true})
     alert("Request Sent")
-    
+    await refreshTeams()
   }
   catch(err){
     console.log("Request unsuccessful")
@@ -53,6 +60,7 @@ const handleCancel=async()=>{
   try{
   await axios.post(`http://localhost:8000/api/join/cancel/${team._id}`,{},{withCredentials:true})
   alert("Request Cancelled")
+  await refreshTeams()
   }
   catch(err){
     console.log(err)
@@ -121,30 +129,26 @@ const handleCancel=async()=>{
           Delete Team
         </button>
         
-        {team.createdBy._id !== user?._id && (
-  team.members.some((mem: any) =>
-    mem._id?.toString() === user?._id?.toString()
-  ) ? (
+        {!isCreator && (
+  isMember ? (
     <button disabled className="bg-green-600 text-white py-2 px-4 rounded-lg opacity-70">
       Joined
     </button>
-  ) : team.joinRequests.some((rq: any) =>
-    rq._id?.toString() === user?._id?.toString()
-  ) ? (
+  ) : hasRequested ? (
     <button
-
-  className="bg-yellow-600 hover:bg-yellow-700 text-white py-2 px-4 rounded-lg transition" onClick={handleCancel}
->
-  Cancel Request
-</button>
-  ) : team.members.length >= team.membersRequired ? (
+      onClick={handleCancel}
+      className="bg-yellow-600 hover:bg-yellow-700 text-white py-2 px-4 rounded-lg transition"
+    >
+      Cancel Request
+    </button>
+  ) : isFull ? (
     <button disabled className="bg-gray-600 text-white py-2 px-4 rounded-lg opacity-70">
       Team Full
     </button>
   ) : (
     <button
-      className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition"
       onClick={handleJoin}
+      className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition"
     >
       Join Request
     </button>

@@ -36,8 +36,9 @@ export default function Navbar() {
           <ul className="flex items-center gap-10 text-slate-600">
             <NavLink to='/' className={({ isActive }) =>`transition-colors ${isActive? "text-blue-600 dark:text-blue-400 font-semibold": "text-slate-700 dark:text-slate-300 hover:text-blue-500 dark:hover:text-blue-400"}`}>Home</NavLink>
             <NavLink to='/teams'  className={({ isActive }) =>`transition-colors ${isActive? "text-blue-600 dark:text-blue-400 font-semibold": "text-slate-700 dark:text-slate-300 hover:text-blue-500 dark:hover:text-blue-400"}`}>Teams</NavLink>
+             {user &&<NavLink to='/my-teams' className={({ isActive }) =>`transition-colors ${isActive? "text-blue-600 dark:text-blue-400 font-semibold": "text-slate-700 dark:text-slate-300 hover:text-blue-500 dark:hover:text-blue-400"}`}>My Teams</NavLink>}
             <NavLink to='/contact-us' className={({ isActive }) =>`transition-colors ${isActive? "text-blue-600 dark:text-blue-400 font-semibold": "text-slate-700 dark:text-slate-300 hover:text-blue-500 dark:hover:text-blue-400"}`}>Contact Us</NavLink>
-            {user &&<NavLink to='/my-teams' className={({ isActive }) =>`transition-colors ${isActive? "text-blue-600 dark:text-blue-400 font-semibold": "text-slate-700 dark:text-slate-300 hover:text-blue-500 dark:hover:text-blue-400"}`}>My Teams</NavLink>}
+           
             <li><ModeToggle /></li>
           </ul>
         </nav>

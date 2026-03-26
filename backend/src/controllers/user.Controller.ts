@@ -325,9 +325,10 @@ const myTeams=asyncHandler(async(req:Request,res:Response)=>{
    const userId=req.user._id
    const user=await User.findById(userId)
    if(!user) throw new ApiError(400,"User does not exist")
-   const createdTeams=await Team.find({createdBy:userId})
-   const joinedTeams=await Team.find({members:userId})
-   const requestedTeams=await Team.find({joinRequests:userId})
+   const createdTeams=await Team.find({createdBy:userId}).populate("createdBy", "fullName avatar role")
+  const joinedTeams = await Team.find({ members: userId,createdBy: { $ne: userId } 
+  }).populate("createdBy", "fullName avatar role")
+   const requestedTeams=await Team.find({joinRequests:userId}).populate("createdBy", "fullName avatar role")
    res.status(200).json(new ApiResponse(200,{createdTeams,joinedTeams,requestedTeams},"Successful"))
 })
 
