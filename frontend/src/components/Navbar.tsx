@@ -64,11 +64,12 @@ export default function Navbar() {
                 <NavLink to='/'><button className="text-left text-lg">Home</button></NavLink>
                 <NavLink to='/teams'><button className="text-left text-lg">Teams</button></NavLink>
                 <NavLink to='/contact-us'><button className="text-left text-lg">Contact Us</button></NavLink>
+                <NavLink to='/my-teams'><button className={!user?"hidden":"text-left text-lg"}>My Teams</button></NavLink>
                 <button className="text-left text-lg"></button>
                 <div className="pt-4 flex flex-col gap-3">
                   <NavLink to='/login'><Button className={user?"hidden" : "w-full"}>Login</Button></NavLink>
                   <NavLink to='/signup'><Button className={user?"hidden" : "w-full"}>Sign Up</Button></NavLink>
-                  <Button variant='destructive' className={!user?"hidden":"w-full"}>Logout</Button>
+                  <NavLink to='/logout'><Button variant='destructive' className={!user?"hidden":"w-full"}>Logout</Button></NavLink>
                 </div>
               </div>
             </SheetContent>

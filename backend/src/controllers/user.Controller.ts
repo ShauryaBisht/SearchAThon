@@ -126,6 +126,8 @@ const deleteTeam=asyncHandler(async(req:Request,res:Response)=>{
   res.status(200).json(
     new ApiResponse(200, null, "Team deleted successfully")
   )
+  await redisClient.del(`teams:details:${teamId}`)
+ await redisClient.del("teams:feed")
 })
 
 const getTeamById=asyncHandler(async(req:Request,res:Response)=>{
