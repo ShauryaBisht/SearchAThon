@@ -1,20 +1,23 @@
 import './App.css'
-import Navbar from './components/Navbar'
-import {motion} from  "framer-motion"
-import Footer from './components/Footer'
-import Hero from './components/Hero'
-import Login from './components/Login'
+import { lazy,Suspense } from 'react'
 import {Routes,Route} from 'react-router-dom'
-import Signup from './components/SignUp'
-import ProtectedRoute from './components/ProtectedRoute'
+import {motion} from  "framer-motion"
+
+import Navbar from './components/Navbar'
+import Footer from './components/Footer'
 import { useAuth } from './components/UserContext'
-import Profile from './components/Profile'
-import ProfileForm from './components/Profileform'
-import Teams from './components/Teams'
-import TeamDetails from './components/TeamDetails'
-import AddTeam from './components/AddTeam'
-import EditTeam from './components/EditTeam'
-import MyTeams from './components/MyTeams'
+import Hero from './components/Hero'
+
+const Login=lazy(()=>import('./components/Login'))
+const Signup=lazy(()=>import('./components/SignUp'))
+const ProtectedRoute=lazy(()=>import('./components/ProtectedRoute'))
+const Teams=lazy(()=>import('./components/Teams'))
+const Profile=lazy(()=>import('./components/Profile'))
+const ProfileForm=lazy(()=>import('./components/Profileform'))
+const AddTeam=lazy(()=>import('./components/AddTeam'))
+const TeamDetails=lazy(()=>import('./components/TeamDetails'))
+const EditTeam=lazy(()=>import('./components/EditTeam'))
+const MyTeams=lazy(()=>import('./components/MyTeams'))
 function App() {
   const { loading } = useAuth();
 
@@ -28,11 +31,11 @@ function App() {
       transition={{ duration: 0.6, ease: "easeOut" }}
     >
      <Navbar />
+     <Suspense fallback={<div className="loading-spinner">Loading page...</div>}>
      <Routes>
      <Route path='/' element={<Hero />} />
      <Route path='/login' element={<Login />} />
      <Route path='/signup' element={<Signup />} />
-
       <Route path="/teams" element={ <ProtectedRoute><Teams /></ProtectedRoute>}></Route>
      <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
 <Route path="/profile/:id" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
@@ -42,6 +45,7 @@ function App() {
       <Route path='/teams/edit/:teamId' element={<ProtectedRoute><EditTeam></EditTeam></ProtectedRoute>}></Route>
       <Route path='/my-teams' element={<ProtectedRoute><MyTeams/></ProtectedRoute>} ></Route>
      </Routes>
+     </Suspense>
      <Footer />
      </motion.div>
     </>
