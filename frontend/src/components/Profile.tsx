@@ -70,8 +70,9 @@ function Profile() {
                         <div className="flex items-center gap-3">
                             <div className="w-20 h-20 overflow-hidden rounded-full bg-white border-2 border-slate-400">
                                 <img
-                                    src={profile?.avatar || "/vite.svg"}
+                                    src={profile?.avatar || "/nopic.jpg"}
                                     className="w-full h-full object-cover"
+                                    loading="lazy"
                                 />
                             </div>
                             <div className="flex flex-col gap-0.5">

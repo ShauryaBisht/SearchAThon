@@ -88,6 +88,7 @@ const handleCancel=async()=>{
           <img
             src={team.avatar || "/avatar.png"}
             alt="creator"
+            loading="lazy"
             className="w-12 h-12 rounded-full object-cover border border-slate-600"
           />
           <div>

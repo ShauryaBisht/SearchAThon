@@ -267,7 +267,7 @@ const joinTeam = asyncHandler(async (req: Request, res: Response) => {
   team.joinRequests.push(userId)
   await team.save()
   await redisClient.del(`teams:details:${teamId}`)
-await redisClient.del("teams:feed")
+ await redisClient.del("teams:feed")
   res.status(200).json(new ApiResponse(200, null, "Request sent"))
 })
 
@@ -287,7 +287,6 @@ const acceptReq=asyncHandler(async(req:Request,res:Response)=>{
   (id) => id.toString() !== userId.toString()
 )
       team.members.push(user._id)
-
       await team.save()
 
 res.status(200).json(new ApiResponse(200, null, "User added to team"))

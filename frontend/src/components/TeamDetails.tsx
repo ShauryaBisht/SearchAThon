@@ -59,17 +59,29 @@ export default function TeamDetails() {
   }, [id])
 
   const handleAccept = async (userId: string) => {
+  const previousTeam = team;
+  if (team) {
+    const acceptedUser = team.joinRequests.find(u => u._id === userId);
+    
+    if (acceptedUser) {
+      setTeam({
+        ...team,
+        joinRequests: team.joinRequests.filter(req => req._id !== userId),
+        members: [...team.members, { _id: acceptedUser._id, fullName: acceptedUser.fullName }]
+      });
+    }
+  }
   try {
     await axios.post(
       `http://localhost:8000/api/join/accept/${team?._id}/${userId}`,
       {},
       { withCredentials: true }
-    )
-
-    await fetchTeam() 
-
+    );
+    
   } catch (err) {
-    console.log(err)
+    console.error(err);
+    setTeam(previousTeam);
+    alert("Failed to accept user. Please try again.");
   }
 }
 const handleReject = async (userId: string) => {
@@ -246,6 +258,7 @@ const handleReject = async (userId: string) => {
             <img
               src={team.avatar}
               alt="Team Avatar"
+              loading="lazy"
               className="w-full h-full object-cover"
             />
           ) : (

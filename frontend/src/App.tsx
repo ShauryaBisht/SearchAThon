@@ -18,6 +18,7 @@ const AddTeam=lazy(()=>import('./components/AddTeam'))
 const TeamDetails=lazy(()=>import('./components/TeamDetails'))
 const EditTeam=lazy(()=>import('./components/EditTeam'))
 const MyTeams=lazy(()=>import('./components/MyTeams'))
+const NotFound=lazy(()=>import('./components/NotFound'))
 function App() {
   const { loading } = useAuth();
 
@@ -44,6 +45,7 @@ function App() {
       <Route path='/teams/:id' element={<ProtectedRoute><TeamDetails /></ProtectedRoute>} />
       <Route path='/teams/edit/:teamId' element={<ProtectedRoute><EditTeam></EditTeam></ProtectedRoute>}></Route>
       <Route path='/my-teams' element={<ProtectedRoute><MyTeams/></ProtectedRoute>} ></Route>
+      <Route path="*" element={<NotFound />} />
      </Routes>
      </Suspense>
      <Footer />
