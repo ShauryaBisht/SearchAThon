@@ -8,6 +8,7 @@ import { Team } from "../models/TeamSchema.js";
 import { uploadOnCloudinary } from "../utils/Cloudinary.js";
 import { v2 as cloudinary } from "cloudinary";
 import { redisClient } from "../config/redis.js";
+import { io,userSockets } from "../app.js";
 
 const editProfile=asyncHandler(async(req:Request,res:Response)=>{
    
@@ -290,6 +291,18 @@ const acceptReq=asyncHandler(async(req:Request,res:Response)=>{
 )
       team.members.push(user._id)
       await team.save()
+
+await redisClient.del(`teams:details:${teamId}`);
+  await redisClient.del("teams:feed");
+
+      const receiverSocketId = userSockets.get(userId as string);
+  if (receiverSocketId) {
+    io.to(receiverSocketId).emit("request_update", {
+      type: "ACCEPTED",
+      teamName: team.name,
+      teamId: team._id
+    });
+  }
 
 res.status(200).json(new ApiResponse(200, null, "User added to team"))
 })

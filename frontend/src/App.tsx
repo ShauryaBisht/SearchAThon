@@ -32,7 +32,7 @@ function App() {
       transition={{ duration: 0.6, ease: "easeOut" }}
     >
      <Navbar />
-     <Suspense fallback={<div className="loading-spinner">Loading page...</div>}>
+     <Suspense fallback={<div>Loading page...</div>}>
      <Routes>
      <Route path='/' element={<Hero />} />
      <Route path='/login' element={<Login />} />
