@@ -1,51 +1,31 @@
-import { useState, useEffect } from "react"
-import TeamCard from "./TeamCard"
-import { Button } from "./ui/button"
-import axios from "axios"
-import { Input } from "./ui/input"
-import { NavLink } from "react-router-dom"
-import { useSocket } from "./Socket"
+"use client";
+import { useState, useEffect } from "react";
+import TeamCard from "./TeamCard";
+import { Button } from "./ui/button";
+import axios from "axios";
+import { Input } from "./ui/input";
+import { NavLink } from "react-router-dom";
 
 function Teams() {
-  const [teams, setTeams] = useState<any[]>([])
-  const [search, setSearch] = useState("")
-  const { socket } = useSocket() 
+  const [teams, setTeams] = useState<any[]>([]);
+  const [search, setSearch] = useState("");
+
   const fetchTeams = async () => {
     try {
-      const res = await axios.get(
-        "http://localhost:8000/api/teams", {
-          params: search ? { search } : {},
-          withCredentials: true
-        }
-      )
-      setTeams(res.data.data)
+      const res = await axios.get("http://localhost:8000/api/teams", {
+        params: search ? { search } : {},
+        withCredentials: true,
+      });
+      setTeams(res.data.data);
     } catch (err) {
-      console.log(err)
+      console.error("Error fetching teams:", err);
     }
-  }
+  };
 
-  
+  // Re-fetch whenever the search query changes
   useEffect(() => {
-    fetchTeams()
-  }, [search])
-
-  
-  useEffect(() => {
-    if (!socket) return;
-
-    const handleUpdate = (data: any) => {
-      console.log("WebSocket event received in list:", data);
-      if (data.type === "ACCEPTED" || data.type === "REJECTED" || data.type === "TEAM_DELETED") {
-        fetchTeams();
-      }
-    };
-
-    socket.on("request_update", handleUpdate);
-
-    return () => {
-      socket.off("request_update", handleUpdate);
-    };
-  }, [socket]);
+    fetchTeams();
+  }, [search]);
 
   return (
     <main className="pb-10">
@@ -54,10 +34,10 @@ function Teams() {
       </h1>
 
       <div className="flex justify-center mt-[2%] gap-4">
-        <Input 
-          placeholder="Search a Team" 
-          className="max-w-xs" 
-          value={search} 
+        <Input
+          placeholder="Search a Team"
+          className="max-w-xs"
+          value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
         <NavLink to="/add-team">
@@ -71,7 +51,7 @@ function Teams() {
             <TeamCard 
               key={team._id} 
               team={team} 
-              refreshTeams={fetchTeams}
+              refreshTeams={fetchTeams} 
             />
           ))
         ) : (
@@ -79,7 +59,7 @@ function Teams() {
         )}
       </div>
     </main>
-  )
+  );
 }
 
-export default Teams
+export default Teams;

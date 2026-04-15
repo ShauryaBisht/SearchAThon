@@ -8,7 +8,7 @@ import { Team } from "../models/TeamSchema.js";
 import { uploadOnCloudinary } from "../utils/Cloudinary.js";
 import { v2 as cloudinary } from "cloudinary";
 import { redisClient } from "../config/redis.js";
-import { io,userSockets } from "../app.js";
+
 
 const editProfile=asyncHandler(async(req:Request,res:Response)=>{
    
@@ -121,6 +121,9 @@ const deleteTeam=asyncHandler(async(req:Request,res:Response)=>{
 
   if (!team) {
     throw new ApiError(404, "Team not found")
+  }
+  if (team.createdBy.toString() !== userId?.toString()) {
+    throw new ApiError(403, "Not authorized to delete this team")
   }
    await Team.findByIdAndDelete(teamId)
 
@@ -274,38 +277,35 @@ const joinTeam = asyncHandler(async (req: Request, res: Response) => {
   res.status(200).json(new ApiResponse(200, null, "Request sent"))
 })
 
-const acceptReq=asyncHandler(async(req:Request,res:Response)=>{
-   const {teamId}=req.params
-   const {userId}=req.params
-   const currentUserId = req.user?._id
-   const user=await User.findById(userId)
-   if(!user)  throw new ApiError(400,"User does not exist")
-    const team=await Team.findById(teamId)
-  if(!team) throw new ApiError(400,"Team does not exist")
+const acceptReq = asyncHandler(async (req: Request, res: Response) => {
+  const { teamId } = req.params
+  const { userId } = req.params
+  const currentUserId = req.user?._id
+
+  const user = await User.findById(userId)
+  if (!user) throw new ApiError(400, "User does not exist")
+
+  const team = await Team.findById(teamId)
+  if (!team) throw new ApiError(400, "Team does not exist")
+
   if (team.createdBy.toString() !== currentUserId?.toString())
-     throw new ApiError(403,"Not authorized for this")
-  if(team?.members.length==team?.membersRequired)
-    throw new ApiError(400,"Team full")
+    throw new ApiError(403, "Not authorized for this")
+
+  if (team.members.length == team.membersRequired)
+    throw new ApiError(400, "Team full")
+
   team.joinRequests = team.joinRequests.filter(
-  (id) => id.toString() !== userId.toString()
-)
-      team.members.push(user._id)
-      await team.save()
+    (id) => id.toString() !== userId.toString()
+  )
 
-await redisClient.del(`teams:details:${teamId}`);
-  await redisClient.del("teams:feed");
+  team.members.push(user._id)
+  await team.save()
 
-      const receiverSocketId = userSockets.get(userId as string);
-  if (receiverSocketId) {
-    io.to(receiverSocketId).emit("request_update", {
-      type: "ACCEPTED",
-      teamName: team.name,
-      teamId: team._id
-    });
-  }
-
-res.status(200).json(new ApiResponse(200, null, "User added to team"))
+  await redisClient.del(`teams:details:${teamId}`)
+  await redisClient.del("teams:feed")
+  res.status(200).json(new ApiResponse(200, null, "User added to team"))
 })
+
 
 const rejectReq=asyncHandler(async(req:Request,res:Response)=>{
    const {teamId}=req.params
@@ -320,7 +320,6 @@ const rejectReq=asyncHandler(async(req:Request,res:Response)=>{
   (id) => id.toString() !== userId.toString()
 )
       await team.save()
-
 await redisClient.del(`teams:details:${teamId}`)
 await redisClient.del("teams:feed")
 res.status(200).json(new ApiResponse(200, null, "Request Rejected"))
