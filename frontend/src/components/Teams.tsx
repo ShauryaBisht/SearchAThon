@@ -4,11 +4,15 @@ import TeamCard from "./TeamCard";
 import { Button } from "./ui/button";
 import axios from "axios";
 import { Input } from "./ui/input";
+import { io } from "socket.io-client";
 import { NavLink } from "react-router-dom";
+import { useAuth } from "./UserContext";
 
 function Teams() {
   const [teams, setTeams] = useState<any[]>([]);
   const [search, setSearch] = useState("");
+  const {user}=useAuth()
+
 
   const fetchTeams = async () => {
     try {
@@ -21,8 +25,27 @@ function Teams() {
       console.error("Error fetching teams:", err);
     }
   };
+  
 
-  // Re-fetch whenever the search query changes
+  useEffect(()=>{
+    if(!user?._id) return
+    
+    const socket=io("http://localhost:8000",{
+      query:{userId:user._id}
+    })
+    socket.on("request-accepted",()=>{
+        console.log("Request accepted");
+         fetchTeams()
+    })
+    socket.on("request-rejected",()=>{
+        console.log("Request rejected");
+         fetchTeams()
+    })
+    return () => {
+      socket.disconnect();
+    };
+  },[user?._id])
+
   useEffect(() => {
     fetchTeams();
   }, [search]);

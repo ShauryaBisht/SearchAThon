@@ -281,7 +281,9 @@ const acceptReq = asyncHandler(async (req: Request, res: Response) => {
   const { teamId } = req.params
   const { userId } = req.params
   const currentUserId = req.user?._id
-
+  
+  const io=req.app.get("io")
+  const userSocketMap=req.app.get("userSocketMap")
   const user = await User.findById(userId)
   if (!user) throw new ApiError(400, "User does not exist")
 
@@ -300,7 +302,14 @@ const acceptReq = asyncHandler(async (req: Request, res: Response) => {
 
   team.members.push(user._id)
   await team.save()
-
+  
+  const applicationSocketId=userSocketMap.get(userId.toString())
+  if(applicationSocketId){
+    io.to(applicationSocketId).emit("request-accepted",{
+      teamId:team._id,
+      teamName:team.name
+    })
+  }
   await redisClient.del(`teams:details:${teamId}`)
   await redisClient.del("teams:feed")
   res.status(200).json(new ApiResponse(200, null, "User added to team"))
@@ -311,15 +320,26 @@ const rejectReq=asyncHandler(async(req:Request,res:Response)=>{
    const {teamId}=req.params
    const {userId}=req.params
    const currentUserId = req.user?._id
+   const io=req.app.get("io")
+   const userSocketMap=req.app.get("userSocketMap")
+
     const team=await Team.findById(teamId)
   if(!team) throw new ApiError(400,"Team does not exist")
   if (team.createdBy.toString() !== currentUserId?.toString())
      throw new ApiError(403,"Not authorized for this")
-
+  
   team.joinRequests = team.joinRequests.filter(
   (id) => id.toString() !== userId.toString()
 )
       await team.save()
+
+  const applicationSocketId=userSocketMap.get(userId.toString())
+  if(applicationSocketId){
+    io.to(applicationSocketId).emit("request-rejected",{
+      teamId:team._id,
+      teamName:team.name
+    })
+  }
 await redisClient.del(`teams:details:${teamId}`)
 await redisClient.del("teams:feed")
 res.status(200).json(new ApiResponse(200, null, "Request Rejected"))

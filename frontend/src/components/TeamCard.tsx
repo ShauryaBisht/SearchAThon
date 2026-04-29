@@ -42,7 +42,6 @@ const isRequested = team.joinRequests?.some(
 )
 
 const isOwner = team.createdBy._id.toString() === userId
-
   const [isProcessing, setIsProcessing] = useState(false)
 
   const handleDelete = async () => {
@@ -150,7 +149,7 @@ const isOwner = team.createdBy._id.toString() === userId
   <button onClick={handleCancel} className="bg-yellow-600 hover:bg-yellow-700 text-white py-2 px-4 rounded-lg transition disabled:opacity-50">Cancel</button>
 )}
 
-{isMember && (
+{isMember && !isOwner&& (
   <span className="bg-green-600/20 text-green-400 border border-green-600/30 py-2 px-6 rounded-lg text-sm font-medium">Joined</span>
 )}
 
