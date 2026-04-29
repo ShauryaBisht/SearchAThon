@@ -34,16 +34,20 @@ function Teams() {
       query:{userId:user._id}
     })
     socket.on("request-accepted",()=>{
-        console.log("Request accepted");
+        console.log("Request accepted")
          fetchTeams()
     })
     socket.on("request-rejected",()=>{
-        console.log("Request rejected");
+        console.log("Request rejected")
          fetchTeams()
     })
+    socket.on("team-deleted",()=>{
+       console.log("Team deleted")
+       fetchTeams()
+    })
     return () => {
-      socket.disconnect();
-    };
+      socket.disconnect()
+    }
   },[user?._id])
 
   useEffect(() => {

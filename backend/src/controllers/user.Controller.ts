@@ -114,6 +114,8 @@ const getTeams=asyncHandler(async(req:Request,res:Response)=>{
 const deleteTeam=asyncHandler(async(req:Request,res:Response)=>{
    const { teamId } = req.params
   const userId = req.user?._id
+  const io=req.app.get("io")
+
    if (!teamId) {
     throw new ApiError(400, "Team ID is required")
   }
@@ -122,11 +124,12 @@ const deleteTeam=asyncHandler(async(req:Request,res:Response)=>{
   if (!team) {
     throw new ApiError(404, "Team not found")
   }
+
   if (team.createdBy.toString() !== userId?.toString()) {
     throw new ApiError(403, "Not authorized to delete this team")
   }
    await Team.findByIdAndDelete(teamId)
-
+  io.emit("team-deleted",{teamId})
   res.status(200).json(
     new ApiResponse(200, null, "Team deleted successfully")
   )
