@@ -5,6 +5,9 @@ import {asyncHandler} from '../utils/asyncHandler.js'
 import {Request,Response} from 'express'
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import { redisClient } from "../config/redis.js";
+import crypto from "crypto"
+import { sendEmail } from "../utils/sendEmail.js";
+
 
 interface DecodedToken extends JwtPayload {
     userId: string;
@@ -33,13 +36,26 @@ const signinUser=asyncHandler(async(req:Request,res:Response)=>{
     
     if(password!=confirmPassword)
          throw new ApiError(400,"The password does not match")
-     const existingUser = await User.findOne({ email });
+     const existingUser = await User.findOne({ email })
               if (existingUser) {
-                 throw new ApiError(409,"User already exists");
+                 throw new ApiError(409,"User already exists")
               }
     const user=await User.create({fullName:fullName,email:email,password})
     if(!user) 
         throw new ApiError(400,"User not created")
+   const verificationToken = crypto.randomBytes(32).toString("hex")
+
+    await redisClient.set(`verify_token:${verificationToken}`, email, {
+    EX: 3600 
+});
+const verificationUrl = `http://localhost:5173/verify?token=${verificationToken}`
+  try{
+     await sendEmail(email,verificationUrl)
+  }
+  catch{
+    console.log(`Mailtrap Error`)
+  }
+
 
     return res.status(200).json(new ApiResponse(200,user,"User created successfully"))
 
@@ -54,6 +70,10 @@ const loginUser=asyncHandler(async(req:Request,res:Response)=>{
     if(!user)
          throw new ApiError(404,"User not Found")
     
+if (!user.isVerified) {
+        throw new ApiError(403, "Please verify your email before logging in")
+    }
+
     const correctPassword= await user.isPasswordCorrect(password)
        if(!correctPassword)
           throw new ApiError(400,"Incorrect password")
@@ -158,5 +178,31 @@ const logOut=asyncHandler(async(req:Request,res:Response)=>{
       .json(new ApiResponse(200,{},"User logged out"))
   })
 
+  const verifyMagicLink = asyncHandler(async (req: Request, res: Response) => {
+    const { token } = req.query
 
-export {signinUser,loginUser,getMe,logOut}
+    if (!token) throw new ApiError(400, "Token is missing")
+
+  
+    const email = await redisClient.get(`verify_token:${token}`)
+
+    if (!email) {
+        throw new ApiError(400, "Link is invalid or has expired")
+    }
+
+  
+    const user = await User.findOneAndUpdate(
+        { email },
+        { $set: { isVerified: true } },
+        { new: true }
+    )
+
+    if (!user) throw new ApiError(404, "User no longer exists")
+    await redisClient.del(`verify_token:${token}`)
+
+    return res.status(200).json(
+        new ApiResponse(200, null, "Email verified successfully! You can now log in.")
+    )
+})
+
+export {signinUser,loginUser,getMe,logOut,verifyMagicLink}

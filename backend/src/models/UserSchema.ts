@@ -14,6 +14,7 @@ export interface IUser{
     skills:string[],
     github:string,
     linkedin:string,
+    isVerified:boolean
 }
 export interface IUserMethods {
   isPasswordCorrect(password: string): Promise<boolean>;
@@ -73,6 +74,10 @@ const userSchema=new Schema<IUser, UserModel, IUserMethods>({
   linkedin: {
     type: String,
   },
+  isVerified:{
+    type:Boolean,
+    default:false
+  }
 },{timestamps:true})
 
 userSchema.pre("save",async function(){

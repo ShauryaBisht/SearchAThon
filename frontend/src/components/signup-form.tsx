@@ -18,16 +18,21 @@ import {useForm} from 'react-hook-form'
 import { useNavigate} from "react-router-dom"
 import { signup } from "@/services/authServices"
 
+
 type SigninFormData={
   fullName:string,
   email:string,
   password:string,
   confirmPassword:string
 }
+interface SignupFormProps extends React.ComponentProps<"div"> {
+  onSuccess: (email: string) => void;
+}
 export function SignupForm({
   className,
+  onSuccess,
   ...props
-}: React.ComponentProps<"div">) {
+}: SignupFormProps) {
 
  const navigate=useNavigate()
 
@@ -40,6 +45,8 @@ export function SignupForm({
       defaultValues: {
         email: "",
         password: "",
+        fullName:"",
+        confirmPassword:""
       },
   })
   const password = watch("password");
@@ -47,7 +54,7 @@ export function SignupForm({
        try{
         const res=await signup(data)
         console.log("SignUp Success:",res);
-        navigate('/login')
+        onSuccess(data.email)
         reset()
        }catch(err){
          console.log("SignUp failed",err);
@@ -69,7 +76,7 @@ export function SignupForm({
                 <FieldLabel htmlFor="name">Full Name</FieldLabel>
                 <Input id="name" type="text" placeholder="John Doe"  {...register("fullName",{
                     required:"Full Name is required",
-                    pattern: /^[A-Za-z]+$/i ,
+                    pattern:/^[A-Za-z\s]+$/i ,
                     maxLength:{value:99,message:"Full name Should be less than 99 letters"}
                   })}/>
                    {errors.fullName?.message && (
@@ -135,7 +142,7 @@ export function SignupForm({
                 </FieldDescription>
               </Field>
               <Field>
-                <Button type="submit" disabled={isSubmitting}>{!isSubmitting?"Create Account":"Creating Account..."}</Button>
+                <Button type="submit" className="w-full" disabled={isSubmitting}>{!isSubmitting?"Create Account":"Creating Account..."}</Button>
                 <FieldDescription className="text-center">
                   Already have an account? <a href="/login">Sign in</a>
                 </FieldDescription>

@@ -8,6 +8,7 @@ import Footer from './components/Footer'
 import { useAuth } from './components/UserContext'
 import Hero from './components/Hero'
 
+
 const Login=lazy(()=>import('./components/Login'))
 const Signup=lazy(()=>import('./components/SignUp'))
 const ProtectedRoute=lazy(()=>import('./components/ProtectedRoute'))
@@ -19,6 +20,7 @@ const TeamDetails=lazy(()=>import('./components/TeamDetails'))
 const EditTeam=lazy(()=>import('./components/EditTeam'))
 const MyTeams=lazy(()=>import('./components/MyTeams'))
 const NotFound=lazy(()=>import('./components/NotFound'))
+const VerifyTeam=lazy(()=>import('./components/Verify'))
 function App() {
   const { loading } = useAuth();
 
@@ -37,6 +39,7 @@ function App() {
      <Route path='/' element={<Hero />} />
      <Route path='/login' element={<Login />} />
      <Route path='/signup' element={<Signup />} />
+     <Route path="/verify" element={<VerifyTeam />} />
       <Route path="/teams" element={ <ProtectedRoute><Teams /></ProtectedRoute>}></Route>
      <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
 <Route path="/profile/:id" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
