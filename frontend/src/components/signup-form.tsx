@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import {useForm} from 'react-hook-form'
-import { useNavigate} from "react-router-dom"
 import { signup } from "@/services/authServices"
 
 
@@ -34,7 +33,6 @@ export function SignupForm({
   ...props
 }: SignupFormProps) {
 
- const navigate=useNavigate()
 
   const {
       register,

@@ -1,7 +1,6 @@
 import { useState } from "react"
 import { Users } from "lucide-react"
 import { Link } from "react-router-dom"
-import { MdDelete } from "react-icons/md"
 import { useAuth } from "./UserContext"
 import axios from "axios"
 
@@ -14,9 +13,9 @@ type Team = {
   membersRequired: number
   rolesNeeded: string[]
   joinRequests: {
-  _id: string
-  fullName: string
-}[]
+    _id: string
+    fullName: string
+  }[]
   avatar: string
   createdBy: {
     _id: string
@@ -34,22 +33,25 @@ export default function TeamCard({ team, refreshTeams }: TeamCardProps) {
   const { user } = useAuth()
   const userId = user?._id?.toString()
   const isMember = team.members.some(
-  (m) => m._id?.toString() === userId
-)
+    (m) => m._id?.toString() === userId
+  )
 
-const isRequested = team.joinRequests?.some(
-  (r) => r._id?.toString() === userId
-)
+  const isRequested = team.joinRequests?.some(
+    (r) => r._id?.toString() === userId
+  )
 
-const isOwner = team.createdBy._id.toString() === userId
+  const isOwner = team.createdBy._id.toString() === userId
   const [isProcessing, setIsProcessing] = useState(false)
 
   const handleDelete = async () => {
+    setIsProcessing(true)
     try {
       await axios.delete(`http://localhost:8000/api/team/${team._id}`, { withCredentials: true })
       await refreshTeams()
     } catch (err) {
       alert("Delete failed")
+    } finally {
+      setIsProcessing(false)
     }
   }
 
@@ -140,22 +142,41 @@ const isOwner = team.createdBy._id.toString() === userId
           <Users size={16} /> View Team
         </Link>
 
-        
         {!isMember && !isRequested && (
-  <button onClick={handleJoin} className="bg-green-600/20 text-green-400 border border-green-600/30 py-2 px-6 rounded-lg text-sm font-medium">Join</button>
-)}
+          <button 
+            onClick={handleJoin} 
+            disabled={isProcessing}
+            className="bg-green-600/20 text-green-400 border border-green-600/30 py-2 px-6 rounded-lg text-sm font-medium disabled:opacity-50"
+          >
+            {isProcessing ? "Joining..." : "Join"}
+          </button>
+        )}
 
-{isRequested && (
-  <button onClick={handleCancel} className="bg-yellow-600 hover:bg-yellow-700 text-white py-2 px-4 rounded-lg transition disabled:opacity-50">Cancel</button>
-)}
+        {isRequested && (
+          <button 
+            onClick={handleCancel} 
+            disabled={isProcessing}
+            className="bg-yellow-600 hover:bg-yellow-700 text-white py-2 px-4 rounded-lg transition disabled:opacity-50"
+          >
+            {isProcessing ? "Canceling..." : "Cancel"}
+          </button>
+        )}
 
-{isMember && !isOwner&& (
-  <span className="bg-green-600/20 text-green-400 border border-green-600/30 py-2 px-6 rounded-lg text-sm font-medium">Joined</span>
-)}
+        {isMember && !isOwner && (
+          <span className="bg-green-600/20 text-green-400 border border-green-600/30 py-2 px-6 rounded-lg text-sm font-medium">
+            Joined
+          </span>
+        )}
 
-{isOwner && (
-  <button onClick={handleDelete} className="flex items-center bg-red-900/40 gap-2 border border-red-800/50 text-red-200 py-2 px-4 rounded-lg hover:bg-red-700 transition">Delete</button>
-)}
+        {isOwner && (
+          <button 
+            onClick={handleDelete} 
+            disabled={isProcessing}
+            className="flex items-center bg-red-900/40 gap-2 border border-red-800/50 text-red-200 py-2 px-4 rounded-lg hover:bg-red-700 transition disabled:opacity-50"
+          >
+            {isProcessing ? "Deleting..." : "Delete"}
+          </button>
+        )}
 
       </div>
     </div>

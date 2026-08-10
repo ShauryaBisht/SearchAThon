@@ -11,7 +11,6 @@ import axios from "axios";
 function Profile() {
     const { user } = useAuth()
     const { id } = useParams()
-    const [profilePic, setProfilePic] = useState("/vite.svg")
     const [publicId, setPublicId] = useState<string | null>(null)
     const [profile, setProfile] = useState<any>(null);
     const skills = profile?.skills ?? [];

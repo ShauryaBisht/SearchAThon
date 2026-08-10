@@ -2,6 +2,7 @@ import express from "express"
 import dotenv from "dotenv"
 import http from 'http'
 import { Server } from "socket.io"
+import { Socket } from "socket.io";
 dotenv.config({ path: "./.env" })
 
 import cookieParser from "cookie-parser"
@@ -53,7 +54,7 @@ const startServer = async () => {
 }
 const userSocketMap = new Map();
 
-io.on("connection",(socket)=>{
+io.on("connection",(socket:Socket)=>{
   const userId=socket.handshake.query.userId
   if(userId && userId!=="undefined"){
     userSocketMap.set(userId,socket.id)
