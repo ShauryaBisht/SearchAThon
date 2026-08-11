@@ -2,6 +2,12 @@ import { useEffect, useState } from "react"
 import axios from "axios"
 import TeamCard from "./TeamCard"
 
+type Member = {
+  _id: string;
+  fullName: string;
+  avatar?: string;
+};
+
 type Team = {
   _id: string
   name: string
@@ -10,9 +16,9 @@ type Team = {
   hackathonLocation: string
   hackathonStartDate: string
   hackathonEndDate: string
-  members: string[]
+  members: Member[]
   membersRequired: number
-  joinRequests: string[]
+  joinRequests: Member[]
   rolesNeeded: string[]
   avatar: string
   createdBy: {
