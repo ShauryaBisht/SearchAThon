@@ -20,6 +20,7 @@ type Team = {
   members: {
     _id: string
     fullName: string
+    avatar?:string
   }[]
   createdBy: {
     _id: string
@@ -169,18 +170,29 @@ const handleReject = async (userId: string) => {
           </div>
         </div>
 
-        <div>
-          <h2 className="text-lg text-blue-500 font-semibold mb-2 flex items-center gap-2">
-            <Users size={18} />
-            Members ({team.members.length}/{team.membersRequired})
-          </h2>
+       <div>
+  <h2 className="text-lg text-blue-500 font-semibold mb-3 flex items-center gap-2">
+    <Users size={18} />
+    Members ({team.members.length}/{team.membersRequired})
+  </h2>
 
-          <div className="space-y-1 text-slate-300 text-sm">
-            {team.members.map((member) => (
-              <p key={member._id}>{member.fullName}</p>
-            ))}
-          </div>
-        </div>
+  <div className="flex flex-wrap gap-2">
+    {team.members.map((member) => (
+      <Link
+        key={member._id}
+        to={`/profile/${member._id}`}
+        className="flex items-center gap-2 bg-slate-800/80 hover:bg-slate-700 border border-slate-700/80 hover:border-blue-500/50 px-3 py-1.5 rounded-lg text-sm text-slate-200 hover:text-blue-400 transition-all group"
+      >
+        <img
+          src={member.avatar || "/avatar.png"}
+          alt={member.fullName}
+          className="w-5 h-5 rounded-full object-cover border border-slate-600 group-hover:border-blue-400 transition-colors"
+        />
+        <span className="font-medium">{member.fullName}</span>
+      </Link>
+    ))}
+  </div>
+</div>
         {isCreator && team.joinRequests && team.joinRequests.length > 0 && (
   <div>
     <h2 className="text-lg text-blue-500 font-semibold mb-3">

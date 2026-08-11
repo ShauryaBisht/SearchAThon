@@ -100,8 +100,8 @@ const getTeams=asyncHandler(async(req:Request,res:Response)=>{
 
    const teams=await Team.find(query)
     .populate("createdBy", "fullName role avatar")
-    .populate("members", "_id fullName")
-    .populate("joinRequests", "_id fullName")
+    .populate("members", "_id fullName avatar role")
+    .populate("joinRequests", "_id fullName avatar")
     .sort({ createdAt: -1 })
    if(!search){
     await redisClient.set(cacheKey, JSON.stringify(teams), {
