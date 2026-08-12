@@ -16,10 +16,12 @@ type TeamFormValues = {
 }
 
 export default function AddTeam() {
-  const { register, handleSubmit, formState: { errors } } = useForm<TeamFormValues>()
+  const { register, handleSubmit, watch, formState: { errors } } = useForm<TeamFormValues>()
   const [teamAvatar, setTeamAvatar] = useState<string | null>(null)
   const [publicId,setPublicId]=useState<string>("")
   const navigate = useNavigate()
+  const today = new Date().toISOString().split("T")[0];
+  const startDate=watch("hackathonStartDate")
   const onSubmit: SubmitHandler<TeamFormValues> = async (data) => {
     if (!teamAvatar || !publicId) {
     alert("Please upload team avatar first");
@@ -67,10 +69,18 @@ export default function AddTeam() {
 
       <div className="grid grid-cols-2 gap-4">
         <Input label="Start Date">
-          <input type="date" {...register("hackathonStartDate", { required: true })} className="input" />
+          <input type="date" {...register("hackathonEndDate", {
+              required: "End date is required",
+              validate: (value) =>
+                !startDate ||
+                new Date(value) >= new Date(startDate) ||
+                "End date cannot be earlier than start date",
+            })} 
+            min={today} 
+            className="input" />
         </Input>
         <Input label="End Date">
-          <input type="date" {...register("hackathonEndDate")} className="input" />
+          <input type="date" {...register("hackathonEndDate")} min={startDate || today} className="input" />
         </Input>
       </div>
 

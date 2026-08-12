@@ -15,6 +15,7 @@ export const actionLimiter = rateLimit({
   message: { message: "Too many actions. Please wait a minute." },
   standardHeaders: true,
   legacyHeaders: false,
+  skip: (req) => req.method === 'OPTIONS'
 });
 
 

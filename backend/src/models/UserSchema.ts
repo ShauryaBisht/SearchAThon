@@ -8,6 +8,8 @@ export interface IUser{
     refreshToken?:string,
     role:string,
     experienceLevel:string,
+    avatar?: string,             
+    avatarPublicId?: string,
     preferredRole:string,
     location:string,
     bio:string,
@@ -36,6 +38,12 @@ const userSchema=new Schema<IUser, UserModel, IUserMethods>({
     password:{
         type:String,
         required:true
+    },
+    avatar: {
+        type: String,            
+    },
+    avatarPublicId: {
+        type: String,            
     },
     refreshToken: {
             type: String

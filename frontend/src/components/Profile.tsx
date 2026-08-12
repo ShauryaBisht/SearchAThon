@@ -4,14 +4,15 @@ import { Badge } from "./ui/badge";
 import { FaGithub } from "react-icons/fa6";
 import { FaLinkedin } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useState, useEffect,useRef } from "react";
+import { useParams} from "react-router-dom";
 import axios from "axios";
 
 function Profile() {
     const { user } = useAuth()
     const { id } = useParams()
-    const [publicId, setPublicId] = useState<string | null>(null)
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [, setPublicId] = useState<string | null>(null)
     const [profile, setProfile] = useState<any>(null);
     const skills = profile?.skills ?? [];
     const isOwnProfile = user?._id === profile?._id;
@@ -19,7 +20,9 @@ function Profile() {
         const formData = new FormData()
         formData.append("image", file)
 
-        const res = await axios.post("http://localhost:8000/api/avatar/upload", formData, { withCredentials: true })
+        const res = await axios.post("http://localhost:8000/api/avatar/upload", formData, { withCredentials: true,headers: {
+            "Content-Type": "multipart/form-data",
+          },})
         setProfile((prev: any) => ({
             ...prev,
             avatar: res.data.imageUrl
@@ -27,16 +30,14 @@ function Profile() {
         setPublicId(res.data.publicId)
     };
     const deletePhoto = async () => {
-        if (!publicId) return;
-
         await axios.delete("http://localhost:8000/api/avatar/delete", {
-            data: { publicId },
             withCredentials: true
         });
 
         setProfile((prev: any) => ({
             ...prev,
-            avatar: null
+            avatar: null,
+            avatarPublicId: null
         }))
         setPublicId(null);
     };
@@ -69,7 +70,7 @@ function Profile() {
                         <div className="flex items-center gap-3">
                             <div className="w-20 h-20 overflow-hidden rounded-full bg-white border-2 border-slate-400">
                                 <img
-                                    src={profile?.avatar || "/nopic.jpg"}
+                                   src={profile?.avatar ? profile.avatar : "/nopic.jpg"}
                                     className="w-full h-full object-cover"
                                     loading="lazy"
                                 />
@@ -105,24 +106,31 @@ function Profile() {
                     <div className="flex gap-9 items-center ">
                         <input
                             type="file"
+                            ref={fileInputRef}
                             id="profileUpload"
                             hidden
                             accept="image/*"
                             onChange={(e) => {
-                                const file = e.target.files?.[0];
-                                if (file) uploadPhoto(file);
+                                const file = e.target.files?.[0]
+                                if (file) uploadPhoto(file)
+                                e.target.value = ""
                             }}
                         />
 
                         {isOwnProfile && (
                             <>
-                                <Button onClick={() => document.getElementById("profileUpload")?.click()}>
-                                    Upload Photo
-                                </Button>
+                               {!profile?.avatar && (
+                                    <Button onClick={() => fileInputRef.current?.click()}>
+                                        Upload Photo
+                                    </Button>
+                                )}
 
-                                <Button variant="destructive" onClick={deletePhoto}>
-                                    Delete Photo
-                                </Button>
+                                {profile?.avatar && (
+                                    <Button type="button" variant="destructive" onClick={deletePhoto}>
+                                        Delete Photo
+                                    </Button>
+                                )}
+                                
                             </>
                         )}
                         {isOwnProfile && (

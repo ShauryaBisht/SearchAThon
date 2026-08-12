@@ -63,13 +63,19 @@ if (!avatar || !avatarPublicId) {
 
 const getUserProfile = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params
+  const cacheKey = `user:profile:${id}`
+  
+  const cachedUser = await redisClient.get(cacheKey)
+  if (cachedUser) {
+    return res.status(200).json(new ApiResponse(200, JSON.parse(cachedUser), "From cache"))
+  }
 
   const user = await User.findById(id).select("-password")
-
   if (!user) {
     throw new ApiError(404, "User not found")
   }
-
+  
+  await redisClient.set(cacheKey, JSON.stringify(user), { EX: 60 })
   res.status(200).json(new ApiResponse(200, user, "Profile fetched"))
 })
 
@@ -213,6 +219,19 @@ const uploadProfilePic = asyncHandler(
     if (!cloudinaryresponse) {
       throw new ApiError(500, "Cloudinary upload failed");
     }
+    await User.findByIdAndUpdate(
+      req.user._id,
+      {
+        $set: {
+          avatar: cloudinaryresponse.secure_url,
+          avatarPublicId: cloudinaryresponse.public_id,
+        },
+      },
+      { new: true }
+    );
+    
+    await redisClient.del(`user:profile:${req.user._id}`);
+    await redisClient.del("teams:feed");
 
     return res.status(200).json({
       imageUrl: cloudinaryresponse.secure_url,
@@ -221,11 +240,38 @@ const uploadProfilePic = asyncHandler(
   }
 );
 const deleteProfilePic=asyncHandler(async(req:Request,res:Response)=>{
-    const {publicId}=req.body
-    if(!publicId)
-      throw  new ApiError(400,"Public Id required")
-    await cloudinary.uploader.destroy(publicId)
-    return res.status(200).json(new ApiResponse(200,"Photo deleted successfully"))
+  console.log("Delete profile pic route triggered for user:", req.user?._id)
+    const userId = req.user?._id;
+    const user = await User.findById(userId);
+    if (!user) {
+        throw new ApiError(404, "User not found");
+    }
+    if (user.avatarPublicId) {
+        try {
+            await cloudinary.uploader.destroy(user.avatarPublicId);
+            console.log("Cloudinary image destroyed:", user.avatarPublicId);
+        } catch (err) {
+            console.error("Cloudinary error:", err);
+        }
+    }
+  
+    const updatedUser = await User.findByIdAndUpdate(
+        userId,
+        {
+            $unset: {
+                avatar: 1,
+                avatarPublicId: 1,
+            },
+        },
+        { new: true }
+    );
+
+    if (redisClient) {
+        await redisClient.del(`user:profile:${userId}`)
+        await redisClient.del("teams:feed")
+    }
+
+    return res.status(200).json(new ApiResponse(200,updatedUser,"Photo deleted successfully"))
 })
 const uploadTeamPic = asyncHandler(
   async (req: Request, res: Response) => {
