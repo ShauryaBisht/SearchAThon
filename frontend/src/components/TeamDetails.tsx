@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { useParams, useNavigate, Link } from "react-router-dom"
 import axios from "axios"
 import { useAuth } from "./UserContext"
-import { Users, CalendarDays, MapPin } from "lucide-react"
+import { Users, CalendarDays, MapPin,X } from "lucide-react"
 import { Button } from "./ui/button"
 import { MdDelete, MdEdit } from "react-icons/md"
 
@@ -99,6 +99,31 @@ const handleReject = async (userId: string) => {
     console.log(err)
   }
 }
+const handleRemoveMember = async (memberId: string, memberName: string) => {
+  if (!confirm(`Are you sure you want to remove ${memberName} from the team?`)) {
+    return
+  }
+
+  const previousTeam = team
+  if (team) {
+    setTeam({
+      ...team,
+      members: team.members.filter((m) => m._id !== memberId),
+    })
+  }
+
+  try {
+    await axios.post(
+      `http://localhost:8000/api/team/remove/${team?._id}/${memberId}`,
+      {},
+      { withCredentials: true }
+    )
+  } catch (err: any) {
+    console.error("Failed to remove member:", err.response?.data || err.message)
+    setTeam(previousTeam)
+    alert("Failed to remove member. Please try again.")
+  }
+}
   const handleDelete = async () => {
     try {
       await axios.delete(
@@ -177,22 +202,41 @@ const handleReject = async (userId: string) => {
   </h2>
 
   <div className="flex flex-wrap gap-2">
-    {team.members.map((member) => (
-      <Link
-        key={member._id}
-        to={`/profile/${member._id}`}
-        className="flex items-center gap-2 bg-slate-800/80 hover:bg-slate-700 border border-slate-700/80 hover:border-blue-500/50 px-3 py-1.5 rounded-lg text-sm text-slate-200 hover:text-blue-400 transition-all group"
-      >
-        <img
-          src={member.avatar || "/avatar.png"}
-          alt={member.fullName}
-          className="w-5 h-5 rounded-full object-cover border border-slate-600 group-hover:border-blue-400 transition-colors"
-        />
-        <span className="font-medium">{member.fullName}</span>
-      </Link>
-    ))}
-  </div>
-</div>
+            {team.members.map((member) => {
+              const canRemove = isCreator && member._id !== team.createdBy._id
+
+              return (
+                <div
+                  key={member._id}
+                  className="flex items-center gap-2 bg-slate-800/80 border border-slate-700/80 px-3 py-1.5 rounded-lg text-sm text-slate-200 group"
+                >
+                  <Link
+                    to={`/profile/${member._id}`}
+                    className="flex items-center gap-2 hover:text-blue-400 transition-colors"
+                  >
+                    <img
+                      src={member.avatar || "/nopic.jpg"}
+                      alt={member.fullName}
+                      className="w-5 h-5 rounded-full object-cover border border-slate-600 group-hover:border-blue-400 transition-colors"
+                    />
+                    <span className="font-medium">{member.fullName}</span>
+                  </Link>
+
+                  {canRemove && (
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveMember(member._id, member.fullName)}
+                      className="ml-1 p-0.5 text-slate-400 hover:text-red-400 hover:bg-slate-700 rounded transition"
+                      title={`Remove ${member.fullName}`}
+                    >
+                      <X size={14} />
+                    </button>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+        </div>
         {isCreator && team.joinRequests && team.joinRequests.length > 0 && (
   <div>
     <h2 className="text-lg text-blue-500 font-semibold mb-3">

@@ -68,19 +68,28 @@ export default function AddTeam() {
       </Input>
 
       <div className="grid grid-cols-2 gap-4">
-        <Input label="Start Date">
-          <input type="date" {...register("hackathonEndDate", {
+        <Input label="Start Date" error={errors.hackathonStartDate?.message}>
+          <input 
+            type="date" 
+            {...register("hackathonStartDate", { required: "Start date is required" })} 
+            min={today} 
+            className="input" 
+          />
+        </Input>
+
+        <Input label="End Date" error={errors.hackathonEndDate?.message}>
+          <input 
+            type="date" 
+            {...register("hackathonEndDate", {
               required: "End date is required",
               validate: (value) =>
                 !startDate ||
                 new Date(value) >= new Date(startDate) ||
                 "End date cannot be earlier than start date",
             })} 
-            min={today} 
-            className="input" />
-        </Input>
-        <Input label="End Date">
-          <input type="date" {...register("hackathonEndDate")} min={startDate || today} className="input" />
+            min={startDate || today} 
+            className="input" 
+          />
         </Input>
       </div>
 

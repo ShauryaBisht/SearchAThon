@@ -426,6 +426,32 @@ const myTeams=asyncHandler(async(req:Request,res:Response)=>{
    res.status(200).json(new ApiResponse(200,{createdTeams,joinedTeams,requestedTeams},"Successful"))
 })
 
+
+const removeMember=asyncHandler(async(req:Request,res:Response)=>{
+   const {teamId,memberId}=req.params
+   const userId=req.user?._id
+   const team=await Team.findById(teamId)
+   if(!team){
+     throw new ApiError(404,"Team Not Found")
+   }
+   if(team.createdBy.toString()!==userId.toString()){
+     throw new ApiError(403,"Only the team leader can remove members")
+   }
+   if(memberId==userId.toString()){
+     throw new ApiError(400,"Team leader cannot be removed from the team")
+   }
+   const updatedTeam = await Team.findByIdAndUpdate(
+    teamId,
+    { $pull: { members: memberId } },
+    { new: true }
+  ).populate("members", "fullName avatar email")
+  if(redisClient){
+    await redisClient.del("teams:feed")
+    await redisClient.del(`teams:details:${teamId}`)
+  }
+  return res.status(200).json(new ApiResponse(200,updatedTeam,"Member Removed Successfully"))
+})
+
 export {editProfile,addTeam,getTeams,deleteTeam,getTeamById,editTeam,uploadProfilePic,deleteProfilePic,uploadTeamPic,getUserProfile,joinTeam
-  ,acceptReq,rejectReq,cancelReq,myTeams
+  ,acceptReq,rejectReq,cancelReq,myTeams,removeMember
 }

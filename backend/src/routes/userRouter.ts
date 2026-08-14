@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import { verifyJWT } from '../middleware/authmiddleware.js';
 import { readLimiter,actionLimiter,uploadLimiter } from '../middleware/rateLimiter.js';
-import { acceptReq, addTeam, cancelReq, deleteProfilePic, deleteTeam, editProfile, editTeam, getTeamById, getTeams, getUserProfile, joinTeam, myTeams, rejectReq, uploadProfilePic, uploadTeamPic } from '../controllers/user.Controller.js';
+import { acceptReq, addTeam, cancelReq, deleteProfilePic, deleteTeam, editProfile, editTeam, getTeamById, getTeams, getUserProfile, joinTeam, myTeams, rejectReq, removeMember, uploadProfilePic, uploadTeamPic } from '../controllers/user.Controller.js';
 import { upload } from '../middleware/multer.js';
 
 const userRouter=Router();
@@ -13,6 +13,7 @@ userRouter.post('/add-team',verifyJWT,upload.single("avatar"),uploadLimiter,addT
 userRouter.delete('/team/:teamId',verifyJWT,actionLimiter,deleteTeam)
 userRouter.get('/team/:teamId',verifyJWT,readLimiter,getTeamById)
 userRouter.put('/team/edit/:teamId',verifyJWT,actionLimiter,editTeam)
+userRouter.post('/team/remove/:teamId/:memberId',verifyJWT,actionLimiter,removeMember)
 userRouter.post('/avatar/upload', verifyJWT, upload.single("image"), uploadLimiter, uploadProfilePic)
 userRouter.post('/team/avatar/upload', verifyJWT, upload.single("image"), uploadLimiter, uploadTeamPic)
 userRouter.delete('/avatar/delete',verifyJWT,actionLimiter,deleteProfilePic)
