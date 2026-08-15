@@ -430,6 +430,8 @@ const myTeams=asyncHandler(async(req:Request,res:Response)=>{
 const removeMember=asyncHandler(async(req:Request,res:Response)=>{
    const {teamId,memberId}=req.params
    const userId=req.user?._id
+   const io = req.app.get("io")
+   const userSocketMap = req.app.get("userSocketMap")
    const team=await Team.findById(teamId)
    if(!team){
      throw new ApiError(404,"Team Not Found")
@@ -449,6 +451,18 @@ const removeMember=asyncHandler(async(req:Request,res:Response)=>{
     await redisClient.del("teams:feed")
     await redisClient.del(`teams:details:${teamId}`)
   }
+  const targetSocketId = userSocketMap?.get(memberId.toString());
+  if (targetSocketId) {
+    io.to(targetSocketId).emit("removed-from-team",{
+      teamId:team._id,
+      teamName:team.name,
+      message:`You have been removed from ${team.name}`,
+    })
+  }
+  io.emit("team-member-updated",{
+    teamId:team._id,
+    removedMemberId:memberId,
+  })
   return res.status(200).json(new ApiResponse(200,updatedTeam,"Member Removed Successfully"))
 })
 
