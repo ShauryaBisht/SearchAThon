@@ -60,6 +60,14 @@ io.on("connection",(socket:Socket)=>{
     userSocketMap.set(userId,socket.id)
     console.log(`User Connected ${userId}`);
   }
+  socket.on("join-team", (teamId: string) => {
+    socket.join(`team:${teamId}`)
+  })
+
+  socket.on("leave-team", (teamId: string) => {
+    socket.leave(`team:${teamId}`)
+  })
+
   socket.on("disconnect",()=>{
       if (userSocketMap.get(userId) === socket.id) {
       userSocketMap.delete(userId);

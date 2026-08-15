@@ -95,6 +95,14 @@ export default function TeamDetails() {
     }
   }, [socket, id, navigate])
 
+  useEffect(() => {
+    if (!socket || !id) return
+    socket.emit("join-team", id)
+    return () => {
+      socket.emit("leave-team", id)
+    }
+  }, [socket, id])
+
   const handleAccept = async (userId: string) => {
     const previousTeam = team
     if (team) {

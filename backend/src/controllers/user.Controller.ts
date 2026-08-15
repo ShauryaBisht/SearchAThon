@@ -452,19 +452,20 @@ const removeMember=asyncHandler(async(req:Request,res:Response)=>{
     await redisClient.del(`teams:details:${teamId}`)
   }
   const targetSocketId = userSocketMap?.get(memberId.toString());
-  if (targetSocketId) {
+  if (targetSocketId && io) {
     io.to(targetSocketId).emit("removed-from-team",{
-      teamId:team._id,
+      teamId:String(team._id),
       teamName:team.name,
       message:`You have been removed from ${team.name}`,
     })
   }
-  io.emit("team-member-updated",{
-    teamId:team._id,
-    removedMemberId:memberId,
-  })
+  io.to(`team:${teamId}`).emit("team-member-updated", {  
+      teamId: String(team._id),
+      removedMemberId: String(memberId),
+    })
   return res.status(200).json(new ApiResponse(200,updatedTeam,"Member Removed Successfully"))
 })
+
 
 export {editProfile,addTeam,getTeams,deleteTeam,getTeamById,editTeam,uploadProfilePic,deleteProfilePic,uploadTeamPic,getUserProfile,joinTeam
   ,acceptReq,rejectReq,cancelReq,myTeams,removeMember
