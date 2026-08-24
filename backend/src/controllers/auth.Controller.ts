@@ -7,6 +7,8 @@ import jwt, { JwtPayload } from 'jsonwebtoken'
 import { redisClient } from "../config/redis.js";
 import crypto from "crypto"
 import { sendEmail } from "../utils/sendEmail.js";
+import validator from "validator"
+import dns from "dns/promises"
 
 
 interface DecodedToken extends JwtPayload {
@@ -14,6 +16,21 @@ interface DecodedToken extends JwtPayload {
     email: string;
 }
 
+const validateEmail=async(email:string):Promise<{isValid:boolean; message?:string}>=>{
+   if(!validator.isEmail(email)){
+        return {isValid:false,message:"Please provide a valid email format"}
+   }
+   const domain=email.split('@')[1];
+   try{
+     const mxRecords=await dns.resolveMx(domain)
+     if(!mxRecords||mxRecords.length===0){
+       return {isValid:false,message:"Email domain is invalid"}
+     }
+   }catch(err){
+      return {isValid:false,message:"Email domain does not exist"}
+   }
+   return {isValid:true}
+}
 const generateAccessAndRefreshTokens=async(userId:any)=>{
     try {
         const user=await User.findById(userId)
@@ -36,28 +53,35 @@ const signinUser=asyncHandler(async(req:Request,res:Response)=>{
     
     if(password!=confirmPassword)
          throw new ApiError(400,"The password does not match")
-     const existingUser = await User.findOne({ email })
+
+    const normalizedEmail = validator.normalizeEmail(email) || email.trim().toLowerCase()
+
+    const emailValidation = await validateEmail(normalizedEmail);
+    if (!emailValidation.isValid) {
+    throw new ApiError(400, emailValidation.message || "Invalid email address");
+    }
+     const existingUser = await User.findOne({ email:normalizedEmail })
               if (existingUser) {
                  throw new ApiError(409,"User already exists")
               }
-    const user=await User.create({fullName:fullName,email:email,password})
+    const user=await User.create({fullName:fullName.trim(),email:normalizedEmail,password,isVerified:false})
     if(!user) 
         throw new ApiError(400,"User not created")
    const verificationToken = crypto.randomBytes(32).toString("hex")
 
-    await redisClient.set(`verify_token:${verificationToken}`, email, {
+    await redisClient.set(`verify_token:${verificationToken}`, normalizedEmail, {
     EX: 3600 
-});
-const verificationUrl = `http://localhost:5173/verify?token=${verificationToken}`
+    })
+    const verificationUrl = `http://localhost:5173/verify?token=${verificationToken}`
   try{
-     await sendEmail(email,verificationUrl)
+     await sendEmail(normalizedEmail,verificationUrl)
   }
-  catch{
-    console.log(`Mailtrap Error`)
+  catch(err:any){
+    console.log("Email service error:", err)
   }
+   const createdUser = await User.findById(user._id).select("-password -refreshToken")
 
-
-    return res.status(200).json(new ApiResponse(200,user,"User created successfully"))
+    return res.status(201).json(new ApiResponse(201,createdUser,"User created successfully, Please check your mail to verify your account"))
 
 })
 const loginUser=asyncHandler(async(req:Request,res:Response)=>{
@@ -65,8 +89,8 @@ const loginUser=asyncHandler(async(req:Request,res:Response)=>{
 
     if(!email || !password)
          throw new ApiError(400,"All fields is required")
-
-    const user=await User.findOne({email:email})
+    const normalizedEmail = validator.normalizeEmail(email) || email.trim().toLowerCase()
+    const user=await User.findOne({email:normalizedEmail})
     if(!user)
          throw new ApiError(404,"User not Found")
     
@@ -169,6 +193,7 @@ const logOut=asyncHandler(async(req:Request,res:Response)=>{
               new:true
           }
         )
+        await redisClient.del(`user:profile:${req.user._id}`)
         const options={
           httpOnly:true,
           secure:false
@@ -205,4 +230,4 @@ const logOut=asyncHandler(async(req:Request,res:Response)=>{
     )
 })
 
-export {signinUser,loginUser,getMe,logOut,verifyMagicLink}
+export {signinUser,loginUser,getMe,logOut,verifyMagicLink,refreshAccessToken}
