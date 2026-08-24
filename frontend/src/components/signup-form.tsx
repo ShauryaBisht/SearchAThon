@@ -16,7 +16,7 @@ import {
 import { Input } from "@/components/ui/input"
 import {useForm} from 'react-hook-form'
 import { signup } from "@/services/authServices"
-
+import { useState } from "react"
 
 type SigninFormData={
   fullName:string,
@@ -33,7 +33,7 @@ export function SignupForm({
   ...props
 }: SignupFormProps) {
 
-
+const [serverError, setServerError] = useState<string | null>(null)
   const {
       register,
       handleSubmit,
@@ -49,13 +49,15 @@ export function SignupForm({
   })
   const password = watch("password");
   const onSubmit=async(data:SigninFormData)=>{
+    setServerError(null)
        try{
         const res=await signup(data)
         console.log("SignUp Success:",res);
         onSuccess(data.email)
         reset()
-       }catch(err){
-         console.log("SignUp failed",err);
+       }catch(err:any){
+         const errorMsg = err.response?.data?.message || "Signup failed. Please try again."
+         setServerError(errorMsg);
        }
   }
   return (
@@ -92,9 +94,10 @@ export function SignupForm({
                   {...register("email",{
                     required:"Email is required",
                     pattern: {
-                      value: /^\S+@\S+\.\S+$/,
-                      message: "Enter a valid email",
+                      value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                      message: "Please enter a valid email address",
                     },
+                    setValueAs: (v) => v.trim().toLowerCase()
                   })}
                 />
                  {errors?.email?.message && (
@@ -141,6 +144,11 @@ export function SignupForm({
               </Field>
               <Field>
                 <Button type="submit" className="w-full" disabled={isSubmitting}>{!isSubmitting?"Create Account":"Creating Account..."}</Button>
+                {serverError && (
+                  <div className="p-3 text-sm text-red-400 bg-red-950/40 border border-red-800 rounded-lg">
+                      {serverError}
+                  </div>
+                )}
                 <FieldDescription className="text-center">
                   Already have an account? <a href="/login">Sign in</a>
                 </FieldDescription>
